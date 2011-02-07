@@ -1,0 +1,247 @@
+body{
+	font: normal normal normal 12px/20px Tahoma,'Lucida Grande', Arial, sans-serif;
+    padding: 0px;
+    margin: 0px;
+}
+
+body .container{
+    width: 1000px;
+    background-color: white;
+    min-height: 400px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.header{
+    background-color: #eee;
+}
+
+.header .content{
+    width: 1000px;
+    margin: 0 auto;
+    padding-bottom: 0px;
+}
+.footer{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.footer a{
+    font-weight: bold;
+}
+
+.footer .content{
+    border-top: solid 1px #bdbdbd;
+    width: 1000px;
+    margin: 0 auto;
+    padding: 2px;
+    padding-top: 5px;
+}
+
+.nw-top-bar{
+    background-color: #E5ECF9;
+    border-top: solid 1px  #ccc;
+    border-bottom: solid 1px #ccc;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.nw-top-bar .content{
+    width: 1000px;
+    margin: 0 auto;
+    padding: 6px;
+}
+
+.nw-top-bar .nw-main-nav{
+    padding: 0px;
+}
+
+.nw-top-bar .nw-main-nav a{
+    padding: 6px 20px 6px 20px;
+}
+
+.top-nav{
+    width: 1000px;
+    margin: 0 auto;
+}
+
+.top-nav .main-nav{
+    font-weight: bold;
+    background-color: #505759;
+    padding: 2px;
+    -webkit-border-bottom-left-radius: 5px;
+    -webkit-border-bottom-right-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: #B9BBBC;
+}
+
+.top-nav .main-nav ul{
+    padding: 0px;
+    margin: 0px;
+}
+
+.top-nav .main-nav ul li{
+    display: inline;
+    padding-left: 3px;
+    padding-right: 10px;
+}
+
+.top-nav .main-nav ul li a{
+    color: #B9BBBC;
+}
+
+.top-nav .main-nav ul li a:hover{
+    color: #fff;
+    text-decoration: none;
+}
+
+a{
+    color: #3B5998;
+	text-decoration: none;
+}
+
+#loading{
+    position: fixed;
+    margin-left: 450px;
+    display: none;
+}
+
+#loading .loading-content{
+    background-color: #505759;
+    color: white;
+    padding: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+    -webkit-border-bottom-left-radius: 5px;
+    -webkit-border-bottom-right-radius: 5px;
+}
+
+a:hover{
+	text-decoration: underline;	
+}
+
+textarea{
+    padding: 5px;
+    border: solid 1px #eee;
+}
+	
+select{
+	padding: 2px;
+	border: solid 1px #eee;
+}
+
+.form input[type='text']{
+	padding: 5px;
+	min-width: 160px;
+	border: solid 1px #eee;
+    font: normal normal normal 12px Tahoma,'Lucida Grande', Arial, sans-serif;
+}
+
+.form input[type='password']{
+	padding: 5px;
+	min-width: 160px;
+	border: solid 1px #eee;
+    font: normal normal normal 12px Tahoma,'Lucida Grande', Tahoma, Arial, sans-serif;
+}
+
+.form textarea{
+    padding: 5px;
+	min-width: 300px;
+    min-height: 100px;
+	border: solid 1px #eee;
+    font: normal normal normal 12px Tahoma,'Lucida Grande', Tahoma, Arial, sans-serif;
+}
+
+.form select{
+    padding: 3px;
+    border: solid 1px #eee;
+}
+
+.uiButton{
+    background:url("../images/input_bg.png") repeat-x scroll center top transparent;
+	border:1px solid #eee;
+	color:#666666;
+	cursor:pointer;
+	padding: 4px;
+	margin:0px;
+	text-shadow:1px 1px 0 #FFFFFF;
+	width:auto;
+    font-weight: bold;
+    font-size: 11px;
+    text-decoration: none;
+}
+
+.uiButton:hover{
+    border:1px solid #B2B2B2;
+    text-decoration: none;
+}
+
+.uiButton:active{
+    background:url("../images/input_bg_hover.png") repeat-x scroll center top transparent;
+}
+
+.nw-left{
+    float: left;
+}
+
+.nw-right{
+    float: right;
+}
+
+.nw-clear{
+    clear: both;
+}
+
+.nw-msg{
+    background-color: #fff7dd;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.nw-msg-error{
+    background-color: #ffeeee;
+}
+
+.nw-price{
+    font-weight: bold;
+    color: green;
+}
+
+.nw-list-price{
+    color: red;
+}
+
+.nw-text-area{
+    text-align: justify; 
+}
+
+.nw-box{
+    border: solid 1px #eee;
+    padding: 5px;
+    min-height: 100px;
+}
+
+.nw-box-header{
+    padding-bottom: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-bottom: solid 1px #eee;
+    margin-bottom: 10px;
+}
+
+.nw-box-header-blue{
+    margin-bottom: 5px;
+    color: #3B5998;
+    font-weight: bold;
+}
+
+.nw-box-content{
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.nw-small{
+    font-family: Tahoma,Verdana, Arial, sans-serif;
+    font-size: 11px;
+}

@@ -1,0 +1,107 @@
+/*!!!!!!!!!!! QuickMenu Core CSS [Do Not Modify!] !!!!!!!!!!!!!*/
+.qmclear {font-size:1px;height:0px;width:0px;clear:left;line-height:0px;display:block;}.qmmc {position:relative;}.qmmc a {float:left;display:block;white-space:nowrap;}.qmmc div a {float:none;}.qmmc div {visibility:hidden;position:absolute;}
+ 
+ 
+/*!!!!!!!!!!! QuickMenu Styles [Please Modify!] !!!!!!!!!!!*/
+ 
+ 
+	/* Remove the comments bleow for vertical mains and change the false value to
+           true in the qm_create function after the menus structure. */
+	/*.qmmc a {float:none}*/
+ 
+		
+ 
+	/*"""""""" (MAIN) Container """"""""*/
+	#qm0
+	{ 
+		background-color:transparent;
+		font-weight: bold;
+	}
+ 
+ 
+	 /*"""""""" (MAIN) Items """"""""*/
+	#qm0 a
+	{
+		color:#3B5998;
+		text-decoration:none;
+		padding:6px 15px 6px 5px;
+		border-right: solid 1px #E5ECF9;
+		border-left: solid 1px #E5ECF9;
+	
+	}
+ 
+ 
+	/*"""""""" (MAIN) Hover State """"""""*/
+	#qm0 a:hover
+	{ 
+		text-decoration: underline;
+	}
+ 
+ 
+	/*"""""""" (MAIN) Active State """"""""*/	
+	body #qm0 .qmactive, body #qm0 .qmactive:hover
+	{ 
+		/* background-color:#efefef;  */
+		border-right: solid 1px #cccccc;
+		border-left: solid 1px #cccccc;
+		background-color:#efefef;
+	}
+ 
+ 
+	/*"""""""" (MAIN) Parent Items """"""""*/
+	#qm0 .qmparent
+	{
+		/*
+		background-image:url(images/arrow_down.gif);
+		background-repeat:no-repeat;
+		background-position:95%;
+		*/
+	}
+ 
+ 
+	/*"""""""" [SUB] Containers """"""""*/
+	#qm0 div
+	{
+		font-weight: normal;
+		background-color:#efefef;
+		padding:5px;
+		border-style:solid;
+		border-width:1px;
+		border-color:#cccccc;
+		margin-top:-1px;
+		border-top: none;
+		
+	}
+ 
+	
+	/*"""""""" [SUB] Hover State """"""""*/
+	#qm0 div a:hover
+	{
+		text-decoration:underline;
+		background-color: #efefef;
+	}
+ 
+ 
+	/*""""""""[SUB] Active State """"""""*/
+	body #qm0 div .qmactive, body #qm0 div .qmactive:hover
+	{
+		background-color:#ffffff;
+	}
+ 
+ 
+	/*"""""""" [SUB] Parent Items """"""""*/
+	#qm0 div .qmparent 
+	{
+		background-image:url(images/arrow_right.gif);	
+	}
+ 
+ 
+	/*"""""""" [SUB] Items """"""""*/
+	#qm0 div a
+	{		
+		background-color:#eeeeee;
+		padding:2px 20px 2px 4px;
+		border-width:0px;
+		border-style:none;
+		border-color:#000000;
+	}

@@ -1,0 +1,36 @@
+	{% load mopay_filters %}
+	<div class='nw-left-nav'>
+    	<ul>
+        	Main
+        	<li {{ "dashboard"|is_selected:page_name }}>
+            	<a href='/admin/dashboard'>Dashboard</a>
+            </li>
+        </ul>
+        <ul>
+        	Category
+        	<li {{ "cat_view"|is_selected:page_name }}>
+            	<a href='/admin/category/view'>View Categories</a>
+            </li>
+            <li {{ "cat_add"|is_selected:page_name }}>
+            	<a href='/admin/category/add'>Add Category</a>
+            </li>
+        </ul>
+        <ul>
+        	Departments
+        	<li {{ "dept_view"|is_selected:page_name }}>
+            	<a href='/admin/department/view' >View Departments</a>
+            </li>
+            <li {{ "dept_add"|is_selected:page_name }}>
+            	<a href='/admin/department/add'>Add Departments</a>
+            </li>
+        </ul>
+        <ul>
+        	Stores
+        	<li {{ "store_view"|is_selected:page_name }}>
+            	<a href='/admin/store/view'>View Stores</a>
+            </li>
+            <li {{ "store_add"|is_selected:page_name }}>
+            	<a href='/admin/store/add'>Add Stores</a>
+            </li>
+        </ul>
+    </div>
