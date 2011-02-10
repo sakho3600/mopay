@@ -17,4 +17,12 @@ urlpatterns = patterns('',
     (r'^request$', 'app.main.views.request'),
     (r'^random$', 'app.main.views.random'),
     (r'^play$', 'app.main.views.play'),
+    
+    (r'^cards$', 'app.main.views.cards'),
+    (r'^agents$', 'app.main.views.agents'),
+    (r'^log/transactions$', 'app.main.views.transaction_log'),
+    (r'^log/incoming/message$', 'app.main.views.incoming_message_log'),
+    (r'^log/outgoing/message$', 'app.main.views.outgoing_message_log'),
+    
+    (r'^login$', 'app.main.views.login'),
 )

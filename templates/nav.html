@@ -1,20 +1,20 @@
 	{% load mopay_filters %}
 	<div class='nw-left-nav'>
     	<ul>
-        	<li {{ "dashboard"|is_selected:page_name }}>
-            	<a href='#'>Cards</a>
+        	<li {{ "cards"|is_selected:page_name }}>
+            	<a href='/cards'>Cards</a>
             </li>
-            <li {{ "dashboard"|is_selected:page_name }}>
-            	<a href='#'>Agents</a>
+            <li {{ "agents"|is_selected:page_name }}>
+            	<a href='/agents'>Agents</a>
             </li>
-            <li {{ "dashboard"|is_selected:page_name }} class='selected'>
-            	<a href='#'>Transaction Log</a>
+            <li {{ "transaction_log"|is_selected:page_name }}>
+            	<a href='/log/transactions'>Transaction Log</a>
             </li>
-            <li {{ "dashboard"|is_selected:page_name }}>
-            	<a href='#'>Incoming Message Log</a>
+            <li {{ "incoming_message_log"|is_selected:page_name }}>
+            	<a href='/log/incoming/message'>Incoming Message Log</a>
             </li>
-            <li {{ "dashboard"|is_selected:page_name }}>
-            	<a href='#'>Outgoing Message Log</a>
+            <li {{ "outgoing_message_log"|is_selected:page_name }}>
+            	<a href='/log/outgoing/message'>Outgoing Message Log</a>
             </li>
         </ul>
     </div>

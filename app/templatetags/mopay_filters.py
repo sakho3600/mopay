@@ -12,7 +12,7 @@ def is_selected(value, page_name):
      """
     s = ''
     if page_name == value:
-        s = "class='selected'"
+        s = "class=selected"
     return s
 
 @register.filter
