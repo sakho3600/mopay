@@ -85,10 +85,11 @@ def send(tokens, sender):
         
     except Card.DoesNotExist:
         msg = ("The card you tried to send does not exists. "
-               "Card PIN: %s. Thank you for using mopay"
+               "Pin sent: %s. Thank you for using mopay"
                 % pin)
         sms = OutgoingMessage(receiver=sender, body=msg,
-                              type='invalid_card_pin', date=time.time())
+                              type='invalid_card_pin', 
+                              timestamp=time.time())
         messages.append(sms)
         return util.response(messages)
 
@@ -113,19 +114,17 @@ def cancel(tokens, sender):
     messages = []
     min_time = time.time() - 900
     
-    #----------------------------
-    
     """
     message = OutgoingMessage.objects.filter(receiver=sender) \
-                .filter(date__gt=min_time) \
+                .filter(timestamp__gt=min_time) \
                 .filter(type__in=['notif_sender','already_sent']) \
-                .order_by('-date')[0]
+                .order_by('-timestamp')[0]
     """
     try:
         message = OutgoingMessage.objects \
-                .filter(Q(receiver=sender), Q(date__gt=min_time),
+                .filter(Q(receiver=sender), Q(timestamp__gt=min_time),
                         Q(type='notif_sender') | Q(type='already_sent')) \
-                .order_by('-date')[0]
+                .order_by('-timestamp')[0]
                 
         Transaction.objects.filter(pk=message.transaction.pk) \
             .update(status='cancelled')
@@ -150,7 +149,8 @@ def cancel(tokens, sender):
     except IndexError:
         msg = "You do not have any active transactions"
         sms = OutgoingMessage(receiver=sender, body=msg,
-                              type='inactive_transaction', date=time.time())
+                              type='inactive_transaction', 
+                              timestamp=time.time())
         messages.append(sms)
         return util.response(messages)
         
@@ -222,7 +222,7 @@ def confirm_cashout(tokens, sender):
                         Q(receiver=sender),Q(timestamp__gt=diff)) \
                 .order_by('-timestamp')[0]
         cashout = Cashout.objects.get(Q(id=message.cashout.id),
-                                      Q(date__gt=diff), Q(confirmed=False))
+                                      Q(timestamp__gt=diff), Q(confirmed=False))
         
         Cashout.objects.filter(pk=cashout.pk).update(confirmed=True)
         Transaction.objects.filter(pk=message.transaction.pk). \

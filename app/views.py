@@ -1,9 +1,10 @@
 import time
 from django.shortcuts import render_to_response as render
 
-import models
-
-from common import actions
+import actions
+import util
+from models import User
+from models import IncomingMessage
 
 args = {}
 def request(request):
@@ -15,12 +16,12 @@ def request(request):
     msg_body = msg_body.lower()
     
     try:
-        sender = models.User.objects.get(phone=sender_number)
-    except models.User.DoesNotExist:
-        sender = models.User(phone=sender_number)
+        sender = User.objects.get(phone=sender_number)
+    except User.DoesNotExist:
+        sender = User(phone=sender_number)
         sender.save()
     
-    message = models.IncomingMessage(sender=sender, body=msg_body, 
+    message = IncomingMessage(sender=sender, body=msg_body, 
                                      timestamp=time.time())
     message.save()
 
@@ -62,6 +63,10 @@ def incoming_message_log(request):
 def outgoing_message_log(request):
     args['page_name'] = 'outgoing_message_log'
     return render('outgoing_message_log.html', args)
+
+def random(request):
+    util.generate_cards()
+    return render('index.html', args)
 
 def login(request):
     return render('login.html', args)

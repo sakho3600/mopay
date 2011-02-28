@@ -12,7 +12,7 @@ class User(models.Model):
     
 class Card(models.Model):
     pin = models.CharField(max_length=20, unique=True)
-    serial = models.CharField(max_length=30, unique=True)
+    serial = models.CharField(max_length=50, unique=True)
     value = models.IntegerField()
     used = models.BooleanField(default=False)
     
