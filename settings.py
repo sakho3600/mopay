@@ -13,7 +13,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'mopay',                      # Or path to database file if using sqlite3.
+        'NAME': 'mopay2',                      # Or path to database file if using sqlite3.
         'USER': 'dammy',                      # Not used with sqlite3.
         'PASSWORD': 'dammy',                  # Not used with sqlite3.
         'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -85,7 +85,7 @@ MIDDLEWARE_CLASSES = (
     #'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'app.urls'
+ROOT_URLCONF = 'urls'
 
 dir = os.path.dirname(__file__)
 ROOT_PATH = dir + '/templates'
@@ -104,6 +104,7 @@ INSTALLED_APPS = (
     #'django.contrib.auth',
     #'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'south',
     #'django.contrib.sites',
     #'django.contrib.messages',
     # Uncomment the next line to enable the admin:
@@ -111,6 +112,4 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'app',
-    'app.main',
-    'app.common',
 )

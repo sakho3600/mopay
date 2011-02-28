@@ -14,15 +14,15 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # (r'^admin/', include(admin.site.urls)),
     
-    (r'^request$', 'app.main.views.request'),
-    (r'^random$', 'app.main.views.random'),
-    (r'^play$', 'app.main.views.play'),
+    (r'^request$', 'app.views.request'),
+    (r'^random$', 'app.views.random'),
+    (r'^play$', 'app.views.play'),
     
-    (r'^cards$', 'app.main.views.cards'),
-    (r'^agents$', 'app.main.views.agents'),
-    (r'^log/transactions$', 'app.main.views.transaction_log'),
-    (r'^log/incoming/message$', 'app.main.views.incoming_message_log'),
-    (r'^log/outgoing/message$', 'app.main.views.outgoing_message_log'),
+    (r'^cards$', 'app.views.cards'),
+    (r'^agents$', 'app.views.agents'),
+    (r'^log/transactions$', 'app.views.transaction_log'),
+    (r'^log/incoming/message$', 'app.views.incoming_message_log'),
+    (r'^log/outgoing/message$', 'app.views.outgoing_message_log'),
     
-    (r'^login$', 'app.main.views.login'),
+    (r'^login$', 'app.views.login'),
 )

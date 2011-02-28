@@ -6,7 +6,7 @@
 <body style='font: normal normal normal 11px/20px Tahoma,'Lucida Grande', Arial, sans-serif;'>
 	{% for x in messages %}
 	
-		<b>Receiver</b>: {{ x.receiver }} <br />
+		<b>Receiver</b>: {{ x.receiver.phone }} {% if x.receiver.is_agent%} <b>agent</b> {% endif %} <br />
 		<b>Message Body</b>: {{ x.body }} 
 	
 		{% if forloop.last %}{% else %}

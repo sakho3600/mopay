@@ -1,22 +1,30 @@
 import time
 from django.shortcuts import render_to_response as render
 
-from app.common import actions
-from app.common.models import message
+import models
+
+from common import actions
 
 args = {}
 def request(request):
     # analyze message body
     # pass to appropraite handler
-    msg = request.GET.get('msg')
-    sender = request.GET.get('sender')
+    msg_body = request.GET.get('msg')
+    sender_number = request.GET.get('sender')
     
-    msg = msg.lower()
-    # log incoming messages
-    incoming_msg = {'sender': sender, 'body': msg, 'date': time.time()}
-    message.msg_in_save(incoming_msg)
+    msg_body = msg_body.lower()
     
-    tokens = msg.split(' ')
+    try:
+        sender = models.User.objects.get(phone=sender_number)
+    except models.User.DoesNotExist:
+        sender = models.User(phone=sender_number)
+        sender.save()
+    
+    message = models.IncomingMessage(sender=sender, body=msg_body, 
+                                     timestamp=time.time())
+    message.save()
+
+    tokens = msg_body.split(' ')
     command = tokens[0]
     
     if command == 'send':
