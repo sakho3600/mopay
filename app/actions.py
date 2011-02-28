@@ -265,6 +265,7 @@ def confirm_cashout(tokens, sender):
                               timestamp=time.time())
         messages.append(sms)
         return util.response(messages)
+    
     except Cashout.DoesNotExist:
         msg = ("The cash out request is no longer active. Mopay Inc.")
         sms = OutgoingMessage(receiver=sender, body=msg,
