@@ -21,7 +21,7 @@ class Card(models.Model):
     
 class Transaction(models.Model):
     id = models.CharField(max_length=30, unique=True, primary_key=True)
-    status = models.CharField(max_length=15)
+    status = models.CharField(max_length=15, default='active')
     card = models.ForeignKey(Card)
     sender = models.ForeignKey(User, related_name='transactionSender')
     receiver = models.ForeignKey(User, related_name='transactionReceiver')
@@ -31,7 +31,7 @@ class Transaction(models.Model):
         return self.id
     
 class Cashout(models.Model):
-    id = models.CharField(max_length=30,unique=True, primary_key=True)
+    id = models.CharField(max_length=50,unique=True, primary_key=True)
     agent = models.ForeignKey(User, related_name='cashoutAgent')
     receiver = models.ForeignKey(User, related_name='cashoutReceiver')
     transaction = models.ForeignKey(Transaction)

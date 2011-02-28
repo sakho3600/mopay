@@ -23,7 +23,7 @@ class Migration(SchemaMigration):
         db.create_table('app_card', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('pin', self.gf('django.db.models.fields.CharField')(unique=True, max_length=20)),
-            ('serial', self.gf('django.db.models.fields.CharField')(unique=True, max_length=30)),
+            ('serial', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50)),
             ('value', self.gf('django.db.models.fields.IntegerField')()),
             ('used', self.gf('django.db.models.fields.BooleanField')(default=False)),
         ))
@@ -32,7 +32,7 @@ class Migration(SchemaMigration):
         # Adding model 'Transaction'
         db.create_table('app_transaction', (
             ('id', self.gf('django.db.models.fields.CharField')(unique=True, max_length=30, primary_key=True)),
-            ('status', self.gf('django.db.models.fields.CharField')(max_length=15)),
+            ('status', self.gf('django.db.models.fields.CharField')(default='active', max_length=15)),
             ('card', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Card'])),
             ('sender', self.gf('django.db.models.fields.related.ForeignKey')(related_name='transactionSender', to=orm['app.User'])),
             ('receiver', self.gf('django.db.models.fields.related.ForeignKey')(related_name='transactionReceiver', to=orm['app.User'])),
@@ -42,7 +42,7 @@ class Migration(SchemaMigration):
 
         # Adding model 'Cashout'
         db.create_table('app_cashout', (
-            ('id', self.gf('django.db.models.fields.CharField')(unique=True, max_length=30, primary_key=True)),
+            ('id', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50, primary_key=True)),
             ('agent', self.gf('django.db.models.fields.related.ForeignKey')(related_name='cashoutAgent', to=orm['app.User'])),
             ('receiver', self.gf('django.db.models.fields.related.ForeignKey')(related_name='cashoutReceiver', to=orm['app.User'])),
             ('transaction', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Transaction'])),
@@ -99,7 +99,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Card'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'pin': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '20'}),
-            'serial': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'}),
+            'serial': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
             'used': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'value': ('django.db.models.fields.IntegerField', [], {})
         },
@@ -107,7 +107,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Cashout'},
             'agent': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'cashoutAgent'", 'to': "orm['app.User']"}),
             'confirmed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30', 'primary_key': 'True'}),
+            'id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50', 'primary_key': 'True'}),
             'receiver': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'cashoutReceiver'", 'to': "orm['app.User']"}),
             'timestamp': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             'transaction': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['app.Transaction']"})
@@ -135,7 +135,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30', 'primary_key': 'True'}),
             'receiver': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'transactionReceiver'", 'to': "orm['app.User']"}),
             'sender': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'transactionSender'", 'to': "orm['app.User']"}),
-            'status': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
+            'status': ('django.db.models.fields.CharField', [], {'default': "'active'", 'max_length': '15'}),
             'timestamp': ('django.db.models.fields.CharField', [], {'max_length': '20'})
         },
         'app.user': {

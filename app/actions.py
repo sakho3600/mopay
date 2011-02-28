@@ -40,7 +40,7 @@ def send(tokens, sender):
     try:
         card = Card.objects.get(pin=pin)
         try:
-            transaction = Transaction.objects.get(card=card)
+            transaction = Transaction.objects.get(Q(card=card), Q(status='active'))
             msg = ("This card has already been sent to %s."
                     "To cancel, Reply this message with 'cancel'." 
                     % transaction.receiver.phone)
@@ -186,7 +186,8 @@ def agent_cashout(tokens, sender):
         return util.response(messages)
     
     cashout = Cashout(id=util.generate_uuid(), agent=sender,
-                      transaction=transaction,receiver=transaction.receiver)
+                      transaction=transaction,receiver=transaction.receiver,
+                      timestamp=time.time())
     cashout.save()
     
     #build msg for receiver
@@ -233,7 +234,7 @@ def confirm_cashout(tokens, sender):
         # build msg to be sent to receiver
         msg = ("Your request to cashout transaction: %s has been confirmed. "
                "Please collect total cash of NGN%s from the agent. Mopay Inc" 
-               % (message.transaction.id, message.transaction.card.id))
+               % (message.transaction.id, message.transaction.card.value))
         sms = OutgoingMessage(receiver=sender, body=msg,
                               type='receiver_cashout_confirmed', 
                               timestamp=time.time())
@@ -242,7 +243,7 @@ def confirm_cashout(tokens, sender):
         # build msg to be sent to agent
         msg = ("The request to cashout transaction: %s has been confirmed. "
                "Please pay the customer total cash of NGN%s. Mopay Inc" 
-               % (message.transaction.id, message.transaction.card.id))
+               % (message.transaction.id, message.transaction.card.value))
         sms = OutgoingMessage(receiver=cashout.agent, body=msg,
                               type='agent_cashout_confirmed', 
                               timestamp=time.time())
