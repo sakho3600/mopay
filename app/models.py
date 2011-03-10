@@ -3,7 +3,7 @@ from django.db import models
 class User(models.Model):
     first_name = models.CharField(max_length=30, null=True)
     last_name = models.CharField(max_length=30, null=True)
-    location = models.CharField(max_length=30, null=True)
+    address = models.CharField(max_length=30, null=True)
     phone = models.CharField(max_length=15,unique=True)
     is_agent = models.BooleanField(default=False)
     
