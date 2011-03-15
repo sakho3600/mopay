@@ -1,0 +1,23 @@
+	{% load mopay_filters %}
+	<div class='mo-left-nav'>
+    	<ul>
+    		<li {{ "users"|is_selected:page_name }}>
+            	<a href='/admin/manage/users'>Manage Users</a>
+            </li>
+            <li {{ "agents"|is_selected:page_name }}>
+            	<a href='/admin/manage/agents'>Manage Agents</a>
+            </li>
+        	<li {{ "cards"|is_selected:page_name }}>
+            	<a href='/admin/manage/cards'>Manage Recharge Cards</a>
+            </li>
+            <li {{ "transaction_log"|is_selected:page_name }}>
+            	<a href='/admin/log/transactions'>View Transaction Log</a>
+            </li>
+            <li {{ "incoming_message_log"|is_selected:page_name }}>
+            	<a href='/admin/log/incoming/message'>Incoming Message Log</a>
+            </li>
+            <li {{ "outgoing_message_log"|is_selected:page_name }}>
+            	<a href='/admin/log/outgoing/message'>Outgoing Message Log</a>
+            </li>
+        </ul>
+    </div>

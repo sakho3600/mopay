@@ -1,10 +1,10 @@
-.nw-left-nav{
+.mo-left-nav{
     border-right: solid 3px #E5ECF9;
     min-height: 300px;
 	width: 170px;
 }
 
-.nw-left-nav .selected{
+.mo-left-nav .selected{
     background-color: #E5ECF9;
     font-weight: bold;
     -webkit-border-top-left-radius: 5px;
@@ -13,7 +13,7 @@
 	-moz-border-radius-bottomleft: 5px;
 }
 
-.nw-left-nav ul{
+.mo-left-nav ul{
     padding: 5px;
     padding-right: 0px;
 	padding-left: 0px;
@@ -22,7 +22,7 @@
 	margin-left: 0px;
 }
 
-.nw-left-nav ul li{
+.mo-left-nav ul li{
     display: block;
     margin-left: 0px;
     padding-left: 10px;
@@ -32,21 +32,21 @@
 	margin-bottom: 5px;
 }
 
-.nw-admin-leftnav{
+.mo-admin-leftnav{
 }
 
-.nw-admin-maincontent{
+.mo-admin-maincontent{
     width: 800px;
     margin-top: 10px;
 }
 
-.nw-admin-table{
+.mo-admin-table{
     border: solid 1px #C5D7EF;
     border-collapse: collapse;
     width: 100%;
 }
 
-.nw-admin-table thead tr th{
+.mo-admin-table thead tr th{
     padding: 3px;
     margin: 0px;
     border: 0px;
@@ -54,24 +54,25 @@
     background-color: #C5D7EF;
 }
 
-.nw-admin-table tbody tr td{
+.mo-admin-table tbody tr td{
     padding: 3px;
 }
 
-.nw-admin-table .tb-even td{
+.mo-admin-table .tb-even td{
     background-color: #eee;
     border-bottom: solid 1px #C5D7EF;
     border-top: solid 1px #C5D7EF;
 }
 
-.nw-admin-table .tb-odd td{
+.mo-admin-table .tb-odd td{
 }
 
-.nw-admin-section-header{
+.mo-page-header{
     padding: 5px;
     margin: 0px;
     margin-bottom: 10px;
     border-bottom: solid 1px #eee;
+	font-weight: bold;
 }
 
 h2{

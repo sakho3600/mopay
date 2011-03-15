@@ -8,7 +8,7 @@ from models import OutgoingMessage
 from models import Transaction
 from models import Card
 from models import User
-from models import Cashout
+#from models import Cashout
 
 def send(tokens, sender):
     """
@@ -169,6 +169,7 @@ def agent_cashout(tokens, sender):
     
     try:
         if sender.is_agent == False:
+            
             raise User.DoesNotExist
         transaction = Transaction.objects.get(id=_transaction_id)
     except User.DoesNotExist:

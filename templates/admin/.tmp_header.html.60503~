@@ -1,0 +1,26 @@
+<div class='header'>
+    <div class="top-nav">
+        <div class="nw-left">
+            <div id='loading'>
+                <div class="nw-small loading-content">loading...</div>
+            </div>
+        </div>
+        <div class="nw-right main-nav">
+            <ul>
+                <li><a href='#'>« Main Site</a></li>
+                <li><a href="/admin/logout">Logout</a></li>
+            </ul>
+        </div>
+        <div class="nw-clear"></div>
+    </div>
+    <div class='content'>
+        <img alt='mopay-logo' src='/static/images/logo-smallest.jpg' />
+    </div>
+</div>
+<div class='nw-top-bar'>
+    <div class='content'>
+        <div class='nw-left'>Logged in as: <b>{{ admin.first_name }} {{ admin.last_name }}</b></div>
+        <div class='nw-right'></div>
+        <div class='nw-clear'></div>
+    </div>
+</div>
