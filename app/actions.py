@@ -1,277 +1,191 @@
-import uuid
+import hashlib
 import time
 
-from django.db.models import Q
+#from django.db.models import Q
+from django.shortcuts import render_to_response as render
 
 import util
 from models import OutgoingMessage
-from models import Transaction
-from models import Card
+#from models import Transaction
+#from models import Card
 from models import User
 #from models import Cashout
 
-def send(tokens, sender):
+def register(tokens, sender_number):
     """
-    Sends A card to a phone number
-        format: send card_pin receiver
-        
-        Before sending the card, we perform few checks.
-            we verify the existence of the card.
-            Check if the card has already been sent before.
-        Then start a new transaction and send notification sms
-        to both the sender and receiver
-        
-    Parameters:
-        tokens: the splitted message
-        sender: the sender of the message
+    Complete user registration.
+    Expected msg format: 'register [new pin] [new pin]'
     """
     messages = []
     
-    # check if pin exists
-    pin = tokens[1].lower()
-    receiver_number = tokens[2]
+    new_pin = tokens[1]
+    new_pin_confirm = tokens[2]
+    
+    if new_pin != new_pin_confirm:
+        msg = "the pins entered are not the same. please try again"
+        sms = OutgoingMessage(body=msg, receiver=sender_number,
+                              timestamp=time.time())
+        messages.append(sms)
+        return send_sms(messages)
     
     try:
-        receiver = User.objects.get(phone=receiver_number)
+        user = User.objects.get(phone=sender_number)
+        user.pin_salt = util.generate_uuid()
+        user.pin = hashlib.md5(new_pin + user.pin_salt).hexdigest()
+        user.save()
+        
+        msg = ("Your registration has been completed. Send '[balance] [pin]' to"
+               " check your available balance.")
+        sms = OutgoingMessage(body=msg, receiver=user.phone,
+                              timestamp=time.time())
+        messages.append(sms)
+        return send_sms(messages)
+    
     except User.DoesNotExist:
-        receiver = User(phone=receiver_number)
-        receiver.save()
+        return msg_user_does_not_exist(sender_number)
     
-    try:
-        card = Card.objects.get(pin=pin)
-        try:
-            transaction = Transaction.objects.get(Q(card=card), Q(status='active'))
-            msg = ("This card has already been sent to %s."
-                    "To cancel, Reply this message with 'cancel'." 
-                    % transaction.receiver.phone)
-            sms = OutgoingMessage(receiver=sender, body=msg, 
-                                  transaction=transaction, type='already_sent',
-                                  timestamp=time.time())
-            if transaction.sender != sender:
-                msg = "This card has already been used. Thank you for using mopay"
-                sms = OutgoingMessage(receiver=sender, body=msg, 
-                                      type='already_used', timestamp=time.time())
-                
-            messages.append(sms)
-            return util.response(messages)
-        
-        except Transaction.DoesNotExist:
-            transaction = Transaction(id=str(uuid.uuid4())[:18], card=card,
-                                      sender=sender, receiver=receiver, 
-                                      timestamp=time.time(), status='active')
-            transaction.save()
-            
-            # build sms for the receiver
-            msg = ("%sN  has been sent to you from %s. TransactionId: %s." 
-                   " Please go to the nearest mopay agent to retrieve." % 
-                    (card.value, sender, transaction.id))
-            sms = OutgoingMessage(receiver=receiver, body=msg, 
-                                  type='notif_receiver', timestamp=time.time(),
-                                  transaction=transaction)
-            messages.append(sms)
-            
-            # build sms for the sender
-            msg = ("You have sent %sNGN to %s."
-                    " TransactionId: %s. Reply this msg with 'cancel' to cancel."
-                    " Thank you for using mopay."
-                    % (card.value, receiver, transaction.id))
-            
-            sms = OutgoingMessage(receiver=sender, body=msg, 
-                                  type='notif_sender', timestamp=time.time(),
-                                  transaction=transaction)
-            
-            messages.append(sms)
-            return util.response(messages)
-        
-    except Card.DoesNotExist:
-        msg = ("The card you tried to send does not exists. "
-               "Pin sent: %s. Thank you for using mopay"
-                % pin)
-        sms = OutgoingMessage(receiver=sender, body=msg,
-                              type='invalid_card_pin', 
-                              timestamp=time.time())
-        messages.append(sms)
-        return util.response(messages)
-
-
-def cancel(tokens, sender):
+    
+def balance(tokens, sender_number):
     """
-    Cancel an active transaction
-    
-    A transaction is defined active if there has been activity against it
-    in the last 900 seconds. 
-    
-    The transaction to cancel is determined by checking the last outgoing
-    message to the user from the outgoing message log.
-    
-    The logs that have meta of type in ['notif_sender', 'already_sent']
-    fit the profile of sequence for cancelling an active transaction
-    
-    Parameters:
-        tokens: the splitted message
-        sender: the sender of the message
+    Return available balance for a user
+    Expected message format: 'balance [pin]'
     """
     messages = []
-    min_time = time.time() - 900
-    
-    """
-    message = OutgoingMessage.objects.filter(receiver=sender) \
-                .filter(timestamp__gt=min_time) \
-                .filter(type__in=['notif_sender','already_sent']) \
-                .order_by('-timestamp')[0]
-    """
+
     try:
-        message = OutgoingMessage.objects \
-                .filter(Q(receiver=sender), Q(timestamp__gt=min_time),
-                        Q(type='notif_sender') | Q(type='already_sent')) \
-                .order_by('-timestamp')[0]
-                
-        Transaction.objects.filter(pk=message.transaction.pk) \
-            .update(status='cancelled')
-            
-        # build sms for the phone that cancelled the transaction
-        msg = ("Transaction with Id: %s has been cancelled." % 
-               message.transaction.id)
-        sms = OutgoingMessage(receiver=sender, body=msg, 
-                              type='transaction_cancel_sender', 
+        pin = tokens[1]
+        user = User.objects.get(phone=sender_number)
+        if not validate_pin(user, pin):
+            return msg_invalid_pin(user.phone)
+        
+        msg = ("Your current account balance is NGN%s . Thank you for"
+               " using Mopay." % user.balance)
+        sms = OutgoingMessage(body=msg, receiver=sender_number,
                               timestamp=time.time())
         messages.append(sms)
-        
-        # build sms for the receiver of the transaction
-        msg = ("Transaction with Id: %s has been cancelled." % 
-               message.transaction.id)
-        sms = OutgoingMessage(receiver=message.transaction.receiver, body=msg,
-                              type='transaction_cancel_receiver', 
-                              timestamp=time.time())
-        
-        messages.append(sms)
-        return util.response(messages)
+        return send_sms(messages)
+    
+    except User.DoesNotExist:
+        return msg_user_does_not_exist(sender_number)
+    
     except IndexError:
-        msg = "You do not have any active transactions"
-        sms = OutgoingMessage(receiver=sender, body=msg,
-                              type='inactive_transaction', 
+        msg = ("Unknow message format. Expected format. 'balance [pin]'")
+        sms = OutgoingMessage(body=msg, receiver=sender_number,
                               timestamp=time.time())
         messages.append(sms)
-        return util.response(messages)
-        
-        
-def agent_cashout(tokens, sender):
+        return send_sms(messages)
+    
+    
+def change_pin(tokens, sender_number):
     """
-    Cashout command is usally performed by an agent
-    
-    An sms is sent to the receiver asking user to confirm
-    cashout by agent
-    
-    'cashout transaction-id'
+    Change user pin number
+    Expected message format: 'change pin [old pin] [new pin] [new pin]'
     """
     messages = []
-    _transaction_id = tokens[1]
-    
     try:
-        if sender.is_agent == False:
-            
-            raise User.DoesNotExist
-        transaction = Transaction.objects.get(id=_transaction_id)
-    except User.DoesNotExist:
-        msg = ("You are not a registered agent. Mopay Inc")
-        sms = OutgoingMessage(receiver=sender, body=msg,
-                              type='not_agent',timestamp=time.time())
-        messages.append(sms)
-        return util.response(messages)
-    except Transaction.DoesNotExist:
-        msg = "This is not a valid transaction id. Please try again"
-        sms = OutgoingMessage(receiver=sender, body=msg,
-                              type='cashout_invalid_transaction_id',
+        old_pin = tokens[2]
+        new_pin = tokens[3]
+        new_pin_confirm = tokens[4]
+        user = User.objects.get(phone=sender_number)
+        
+        if not validate_pin(user, old_pin):
+            return msg_invalid_pin(user.phone)
+        
+        if new_pin != new_pin_confirm:
+            msg = ("The pin entered are not the same. please try again."
+                   " Format: 'change pin [old pin] [new pin] [new pin]'")
+            sms = OutgoingMessage(body=msg, receiver=sender_number,
+                                  timestamp=time.time())
+            messages.append(sms)
+            return send_sms(messages)
+        
+        user.pin_salt = util.generate_uuid()
+        user.pin = hashlib.md5(new_pin + user.pin_salt).hexdigest()
+        user.save()
+        
+        msg = ("Your pin has been successfully changed.")
+        sms = OutgoingMessage(body=msg, receiver=sender_number,
                               timestamp=time.time())
         messages.append(sms)
-        return util.response(messages)
+        return send_sms(messages)
+        
+    except User.DoesNotExist:
+        return msg_user_does_not_exist(sender_number)
     
-    cashout = Cashout(id=util.generate_uuid(), agent=sender,
-                      transaction=transaction,receiver=transaction.receiver,
-                      timestamp=time.time())
-    cashout.save()
+    except IndexError:
+        msg = ("Unknow message format. Expected format. 'change pin" 
+               "[old pin] [new pin] [new pin]'")
+        sms = OutgoingMessage(body=msg, receiver=sender_number,
+                              timestamp=time.time())
+        messages.append(sms)
+        return send_sms(messages)
     
-    #build msg for receiver
-    msg = ("Your transaction is about to be claimed. Please confirm you are "
-           "the one making this claim by replying this message with 'confirm'"
-           " within 15mins. Mopay Inc.")
-    sms = OutgoingMessage(receiver=transaction.receiver, body=msg,
-                          type='receiver_confirm_cashout', timestamp=time.time(),
-                          transaction=transaction, cashout=cashout)
-    messages.append(sms)
+def transaction_history(tokens, sender_number):
+    """
+    Returns 5 last transactions of the user
+    Expected format: 'transaction history [pin]'
+    """
+    return None
+
+def transfer_funds(tokens, sender_number):
+    """
+    Transfer funds to user or non-user
+    Expected format: 'transfer [amount] [receiver] [pin]'
     
-    # build msg to be sent to agent
-    msg = ("Your request to cashout transaction: %s has been processed. "
-           "Now waiting for receiver confirmation." % transaction.id)
-    sms = OutgoingMessage(receiver=sender, body=msg,
-                          type='cashout_request_processed', 
+    transaction limit: NGN3,000
+    daily transaction limit: NGN30,000
+    """
+    return None
+
+def load_account(tokens, sender_number):
+    """
+    Load a user account
+    Expected format: 'reload [scratch-card pin] [pin]'
+    """
+    return None
+
+def cashout(tokens, sender_number):
+    """
+    Generate cashout ticket
+    Expected Format: 'cashout [amount] [pin]'
+    """
+    return None
+    
+def send_sms(messages, use_render=True):
+    args = {'messages': messages}
+    for m in messages:
+        m.save()
+    if use_render == True:
+        return render('admin/msg.html', args)
+    
+def validate_pin(user, pin):
+    if hashlib.md5(pin + user.pin_salt).hexdigest() == user.pin:
+        return True
+    
+def msg_invalid_pin(receiver):
+    messages = []
+    msg = "Invalid pin number. Please try again"
+    sms = OutgoingMessage(body=msg, receiver=receiver,
                           timestamp=time.time())
     messages.append(sms)
-    return util.response(messages)
+    return send_sms(messages)
 
+def msg_user_does_not_exist(receiver):
+    messages= []
+    msg = "Please go to the nearest agent to register."
+    sms = OutgoingMessage(body=msg, receiver=receiver,
+                          timestamp=time.time())
+    messages.append(sms)
+    return send_sms(messages)
 
-def confirm_cashout(tokens, sender):
-    """
-    User confirms cashout
-    """
-    messages = []
-    diff = time.time() - 900
+"""
+def build_msg(msg_body, receiver, meta=None):
+    sms = OutgoingMessage(body=msg_body, receiver=receiver,
+                          timestamp=time.time())
     
-    # get last msg sent to user about cashout
-    try:
-        message = OutgoingMessage.objects \
-                .filter(Q(type='receiver_confirm_cashout'),
-                        Q(receiver=sender),Q(timestamp__gt=diff)) \
-                .order_by('-timestamp')[0]
-        cashout = Cashout.objects.get(Q(id=message.cashout.id),
-                                      Q(timestamp__gt=diff), Q(confirmed=False))
+    if meta:
+        sms.meta = meta
         
-        Cashout.objects.filter(pk=cashout.pk).update(confirmed=True)
-        Transaction.objects.filter(pk=message.transaction.pk). \
-            update(status='completed')
-        Card.objects.filter(pk=message.transaction.card.pk). \
-            update(used=True)
-            
-        # build msg to be sent to receiver
-        msg = ("Your request to cashout transaction: %s has been confirmed. "
-               "Please collect total cash of NGN%s from the agent. Mopay Inc" 
-               % (message.transaction.id, message.transaction.card.value))
-        sms = OutgoingMessage(receiver=sender, body=msg,
-                              type='receiver_cashout_confirmed', 
-                              timestamp=time.time())
-        messages.append(sms)
-        
-        # build msg to be sent to agent
-        msg = ("The request to cashout transaction: %s has been confirmed. "
-               "Please pay the customer total cash of NGN%s. Mopay Inc" 
-               % (message.transaction.id, message.transaction.card.value))
-        sms = OutgoingMessage(receiver=cashout.agent, body=msg,
-                              type='agent_cashout_confirmed', 
-                              timestamp=time.time())
-        messages.append(sms)
-        
-        #build msg to be sent to the original sender of the cash
-        msg = ("%s has just received NGN%s sent by you. Thank you for using Mopay."
-               " Mopay Inc" % (message.transaction.receiver, message.transaction.card.value))
-        sms = OutgoingMessage(receiver=message.transaction.sender,body=msg,
-                              type='sender_cashout_confirmed',
-                              timestamp=time.time())
-        messages.append(sms)
-        return util.response(messages)
-            
-    except IndexError:
-        msg = ("No active cashout requests to confirm. Mopay Inc.")
-        sms = OutgoingMessage(receiver=sender, body=msg,
-                              type='no_active_cashout_request',
-                              timestamp=time.time())
-        messages.append(sms)
-        return util.response(messages)
-    
-    except Cashout.DoesNotExist:
-        msg = ("The cash out request is no longer active. Mopay Inc.")
-        sms = OutgoingMessage(receiver=sender, body=msg,
-                              type='cashout_request_expired', 
-                              timestamp=time.time())
-        messages.append(sms)
-        return util.response(messages)
-    
+    messages = [sms]
+    send_sms(messages)
+"""

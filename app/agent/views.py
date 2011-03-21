@@ -1,10 +1,13 @@
 import hashlib
+import time
 from django.shortcuts import render_to_response as render
 from django.shortcuts import HttpResponseRedirect as redirect
 
 from app.models import Agent
 from app.models import User
+from app.models import OutgoingMessage
 from app import util
+from app import actions
 
 INVALID_LOGIN = "1"
 LOGOUT_SUCCESS = "2"
@@ -116,7 +119,12 @@ def register_user_process(request):
         user.pin = hashlib.md5(default_pin + user.pin_salt).hexdigest()
         
         # send sms to new user
-        
+        msg = ("Please respond to this sms with your new PIN, in the format"
+               "'register [new pin] [new pin]' to complete the registration.")
+        sms = OutgoingMessage(receiver=user.phone, body=msg,
+                              timestamp=time.time(), type='user_reg')
+        messages = [sms]
+        actions.send_sms(messages, use_render=False)
         user.save()
         
         return redirect('/agent/register/user?msg=5')

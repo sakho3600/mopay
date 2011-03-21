@@ -3,7 +3,7 @@ from cStringIO import StringIO
 from django.db import models
 
 class BlobField(models.Field):
-    """A field for persisting binary data in databases that we support."""
+    """A field for persisting binary data in mysql database that we support."""
     __metaclass__ = models.SubfieldBase
 
     def __unicode__(self):

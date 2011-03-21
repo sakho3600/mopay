@@ -15,8 +15,8 @@ urlpatterns = patterns('',
     # (r'^admin/', include(admin.site.urls)),
     
     (r'^request$', 'app.views.request'),
-    (r'^random$', 'app.views.random'),
-    (r'^play$', 'app.views.play'),
+    (r'^random$', 'app.admin.views.random'),
+    (r'^play$', 'app.admin.views.play'),
     
     # agents center
     (r'^agent$', 'app.agent.views.main'),

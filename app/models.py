@@ -76,13 +76,13 @@ class RequestCashoutTicket(models.Model):
     confirmed = models.BooleanField()
     
 class IncomingMessage(models.Model):
-    sender = models.ForeignKey(User)
+    sender = models.CharField(max_length=15)
     body = models.TextField()
     timestamp = models.CharField(max_length=30)
 
 class OutgoingMessage(models.Model):
     body = models.TextField()
-    receiver = models.ForeignKey(User)
+    receiver = models.CharField(max_length=15)
     timestamp = models.CharField(max_length=30)
     type = models.CharField(max_length=50, null=True)
     meta = BlobField(null=True)

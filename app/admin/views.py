@@ -27,9 +27,9 @@ def main(request):
 
 def play(request):
     args['page_name'] = 'play'
-    #args['password'] = 'superadmin'
-    #args['password_salt'] = '0x1edf33#@'
-    #args['password_hash'] = hashlib.md5(args['password'] + args['password_salt']).hexdigest()
+    args['password'] = 'superadmin'
+    args['password_salt'] = '0x1edf33#@'
+    args['password_hash'] = hashlib.md5(args['password'] + args['password_salt']).hexdigest()
     """
     msg = OutgoingMessage()
     msg.meta = datetime.datetime.now()
@@ -154,6 +154,7 @@ def outgoing_message_log(request):
     return render('admin/outgoing_message_log.html', args)
 
 def random(request):
+    args = {'page_name': ''}
     util.generate_cards()
     return render('admin/index.html', args)
 
