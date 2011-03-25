@@ -23,7 +23,7 @@ class Migration(SchemaMigration):
             ('last_name', self.gf('django.db.models.fields.CharField')(max_length=30)),
             ('username', self.gf('django.db.models.fields.CharField')(max_length=30, unique=True, null=True)),
             ('address', self.gf('django.db.models.fields.CharField')(max_length=30)),
-            ('phone', self.gf('django.db.models.fields.CharField')(max_length=15)),
+            ('phone', self.gf('django.db.models.fields.CharField')(unique=True, max_length=15)),
             ('pin', self.gf('django.db.models.fields.CharField')(max_length=50)),
             ('pin_salt', self.gf('django.db.models.fields.CharField')(max_length=70)),
             ('balance', self.gf('django.db.models.fields.FloatField')(default=5000)),
@@ -70,8 +70,8 @@ class Migration(SchemaMigration):
         db.create_table('app_transaction', (
             ('id', self.gf('django.db.models.fields.CharField')(unique=True, max_length=30, primary_key=True)),
             ('status', self.gf('django.db.models.fields.CharField')(default='start', max_length=15)),
-            ('sender', self.gf('django.db.models.fields.related.ForeignKey')(related_name='transactionSender', to=orm['app.User'])),
-            ('receiver', self.gf('django.db.models.fields.related.ForeignKey')(related_name='transactionReceiver', to=orm['app.User'])),
+            ('sender', self.gf('django.db.models.fields.CharField')(max_length=20)),
+            ('receiver', self.gf('django.db.models.fields.CharField')(max_length=20)),
             ('timestamp', self.gf('django.db.models.fields.CharField')(max_length=30)),
             ('amount', self.gf('django.db.models.fields.FloatField')()),
             ('type', self.gf('django.db.models.fields.CharField')(max_length=15)),
@@ -81,8 +81,8 @@ class Migration(SchemaMigration):
         # Adding model 'CashoutTicket'
         db.create_table('app_cashoutticket', (
             ('id', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50, primary_key=True)),
-            ('sender', self.gf('django.db.models.fields.related.ForeignKey')(related_name='cashoutTicketSender', to=orm['app.User'])),
-            ('receiver', self.gf('django.db.models.fields.related.ForeignKey')(related_name='cashoutTicketReceiver', to=orm['app.User'])),
+            ('sender', self.gf('django.db.models.fields.CharField')(max_length=20)),
+            ('receiver', self.gf('django.db.models.fields.CharField')(max_length=20)),
             ('transaction', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Transaction'])),
             ('timestamp', self.gf('django.db.models.fields.CharField')(max_length=30)),
         ))
@@ -185,8 +185,8 @@ class Migration(SchemaMigration):
         'app.cashoutticket': {
             'Meta': {'object_name': 'CashoutTicket'},
             'id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50', 'primary_key': 'True'}),
-            'receiver': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'cashoutTicketReceiver'", 'to': "orm['app.User']"}),
-            'sender': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'cashoutTicketSender'", 'to': "orm['app.User']"}),
+            'receiver': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
+            'sender': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             'timestamp': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
             'transaction': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['app.Transaction']"})
         },
@@ -223,8 +223,8 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Transaction'},
             'amount': ('django.db.models.fields.FloatField', [], {}),
             'id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30', 'primary_key': 'True'}),
-            'receiver': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'transactionReceiver'", 'to': "orm['app.User']"}),
-            'sender': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'transactionSender'", 'to': "orm['app.User']"}),
+            'receiver': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
+            'sender': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             'status': ('django.db.models.fields.CharField', [], {'default': "'start'", 'max_length': '15'}),
             'timestamp': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
             'type': ('django.db.models.fields.CharField', [], {'max_length': '15'})
@@ -236,7 +236,7 @@ class Migration(SchemaMigration):
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
-            'phone': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
+            'phone': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
             'pin': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'pin_salt': ('django.db.models.fields.CharField', [], {'max_length': '70'}),
             'username': ('django.db.models.fields.CharField', [], {'max_length': '30', 'unique': 'True', 'null': 'True'})

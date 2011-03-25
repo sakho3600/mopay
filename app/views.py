@@ -22,28 +22,26 @@ def request(request):
     try:
         tokens = msg_body.split(' ')
         command = tokens[0]
-        """
-        if command == 'send':
-            return actions.send(tokens, sender)
-        elif command == 'cancel':
-            return actions.cancel(tokens, sender)
-        elif command == 'cashout':
-            return actions.agent_cashout(tokens, sender)
-        elif command == 'confirm':
-            return actions.confirm_cashout(tokens, sender)
-        else:
-            args = {'error_msg': 'Unknown service command. Please try again' }
-            return render('msg.html', args)
-        """
         
         if command == 'register':
             return actions.register(tokens, sender_number)
         elif command == 'balance':
             return actions.balance(tokens, sender_number)
+        elif command == 'reload':
+            return actions.load_account(tokens, sender_number)
         elif command == 'change' and tokens[1] == 'pin':
             return actions.change_pin(tokens, sender_number)
+        elif command == 'transfer':
+            return actions.transfer_funds(tokens, sender_number)
+        elif command == 'cashout':
+            return actions.cashout(tokens, sender_number)
+        elif command == 'confirm':
+            return actions.confirm(tokens, sender_number)
+        elif command == 'transaction' and tokens[1] == 'history':
+            return actions.transaction_history(tokens, sender_number)
         else:
             return unknown_service_command(sender_number)
+        
     except IndexError:
         return unknown_service_command(sender_number)
     

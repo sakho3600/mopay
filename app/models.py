@@ -16,7 +16,7 @@ class User(models.Model):
     last_name = models.CharField(max_length=30)
     username = models.CharField(max_length=30, null=True, unique=True)
     address = models.CharField(max_length=30)
-    phone = models.CharField(max_length=15)
+    phone = models.CharField(max_length=15, unique=True)
     pin = models.CharField(max_length=50)
     pin_salt = models.CharField(max_length=70)
     balance = models.FloatField(default=5000)
@@ -53,20 +53,20 @@ class Card(models.Model):
     
 class Transaction(models.Model):
     id = models.CharField(max_length=30, unique=True, primary_key=True)
-    status = models.CharField(max_length=15, default='start')
-    sender = models.ForeignKey(User, related_name='transactionSender')
-    receiver = models.ForeignKey(User, related_name='transactionReceiver')
+    status = models.CharField(max_length=50, default='start')
+    sender = models.CharField(max_length=20)
+    receiver = models.CharField(max_length=20)
     timestamp = models.CharField(max_length=30)
     amount = models.FloatField()
-    type = models.CharField(max_length=15)
+    type = models.CharField(max_length=50)
     
     def __unicode__(self):
         return self.id
 
 class CashoutTicket(models.Model):
     id = models.CharField(max_length=50, unique=True, primary_key=True)
-    sender = models.ForeignKey(User, related_name='cashoutTicketSender')
-    receiver = models.ForeignKey(User, related_name='cashoutTicketReceiver')
+    sender = models.CharField(max_length=20)
+    receiver = models.CharField(max_length=20)
     transaction = models.ForeignKey(Transaction)
     timestamp = models.CharField(max_length=30)
 
