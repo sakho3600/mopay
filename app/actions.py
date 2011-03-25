@@ -130,6 +130,9 @@ def transaction_history(tokens, sender_number):
         transactions = Transaction.objects.filter(
             Q(sender=sender_number) | Q(receiver=sender_number)). \
             order_by('-timestamp')[0:5]
+            
+        # convert to list
+        transactions = [x for x in transactions]
         
         msg = ""
         for x in transactions:
@@ -141,7 +144,8 @@ def transaction_history(tokens, sender_number):
             elif x.receiver == sender_number:
                 msg = msg + "from: %s" % (x.sender)
             
-            msg = msg + " | "
+            if transactions.index(x) != (len(transactions) - 1):
+                msg = msg + " | "
         
         sms = OutgoingMessage(body=msg, receiver=sender_number,
                               timestamp=time.time(), type='transaction_history')
