@@ -2,8 +2,6 @@ import time
 from django.shortcuts import render_to_response as render
 
 import actions
-import util
-from models import User
 from models import IncomingMessage
 from models import OutgoingMessage
 
@@ -13,6 +11,9 @@ def request(request):
     # pass to appropraite handler
     msg_body = request.GET.get('msg')
     sender_number = request.GET.get('sender')
+    
+    if sender_number[:4] == '+234':
+        sender_number = '0' + sender_number[4:]
     
     msg_body = msg_body.lower()
     message = IncomingMessage(sender=sender_number, body=msg_body, 

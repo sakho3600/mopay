@@ -2,5 +2,22 @@
 {% block title %} Play {% endblock %}
 
 {% block body %}
-	Cashout ticket
+	{% include "flash.html" %}
+	<div class="mo-page-header">
+    	Cashout Ticket
+    </div>
+    <div>
+    	<form class="form" method="get" action="/agent/cashout/ticket">
+        	<table>
+            	<tr>
+                	<td>Cashout Ticket ID:</td>
+                    <td><input type="text" name="q" /></td>
+                </tr>
+                <tr>
+                	<td></td>
+                    <td><input type="submit" value="Search" /></td>
+                </tr>
+            </table>
+        </form>
+    </div>
 {% endblock %}

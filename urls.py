@@ -22,7 +22,12 @@ urlpatterns = patterns('',
     (r'^agent$', 'app.agent.views.main'),
     (r'^agent/register/user$', 'app.agent.views.register_user'),
     (r'^agent/register/user/process$', 'app.agent.views.register_user_process'),
+    
     (r'^agent/cashout/ticket$', 'app.agent.views.cashout_ticket'),
+    (r'^agent/cashout/ticket/details$', 'app.agent.views.cashout_ticket_details'),
+    (r'^agent/cashout/ticket/details/process$', 'app.agent.views.cashout_ticket_details_process'),
+    (r'^agent/cashout/active/requests$', 'app.agent.views.cashout_active_requests'),
+    
     (r'^agent/cashout/history$', 'app.agent.views.cashout_history'),
     
     

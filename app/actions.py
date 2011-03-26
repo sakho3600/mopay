@@ -1,5 +1,6 @@
 import hashlib
 import time
+import MySQLdb as db
 
 from django.db.models import Q
 from django.shortcuts import render_to_response as render
@@ -55,6 +56,10 @@ def balance(tokens, sender_number):
     try:
         pin = tokens[1]
         user = User.objects.get(phone=sender_number)
+        
+        if not account_activated(user):
+            return msg_account_not_activated(user.phone)
+        
         if not validate_pin(user, pin):
             return msg_invalid_pin(user.phone)
         
@@ -85,6 +90,10 @@ def change_pin(tokens, sender_number):
         new_pin = tokens[3]
         new_pin_confirm = tokens[4]
         user = User.objects.get(phone=sender_number)
+        
+        
+        if not account_activated(user):
+            return msg_account_not_activated(user.phone)
         
         if not validate_pin(user, old_pin):
             return msg_invalid_pin(user.phone)
@@ -124,6 +133,10 @@ def transaction_history(tokens, sender_number):
     try:
         pin = tokens[2]
         user = User.objects.get(phone=sender_number)
+        
+        if not account_activated(user):
+            return msg_account_not_activated(user.phone)
+        
         if not validate_pin(user, pin):
             return msg_invalid_pin(user.phone)
         
@@ -171,6 +184,10 @@ def load_account(tokens, sender_number):
         pin = tokens[2].lower()
         
         user = User.objects.get(phone=sender_number)
+        
+        if not account_activated(user):
+            return msg_account_not_activated(user.phone)
+        
         if not validate_pin(user, pin):
             return msg_invalid_pin(user.phone)
         
@@ -228,6 +245,9 @@ def transfer_funds(tokens, sender_number):
         user = User.objects.get(phone=sender_number)
         if not validate_pin(user, pin):
             return msg_invalid_pin(user.phone)
+        
+        if not account_activated(user):
+            return msg_account_not_activated(user.phone)
         
         # check account balance
         if amount > (user.balance - 100):
@@ -291,14 +311,14 @@ def confirm(tokens, sender_number):
         last_msg = OutgoingMessage.objects. \
             filter(Q(receiver=sender_number)).order_by('-timestamp')[0]
             
-        msg_req_confirm = ['confirm_transaction']
+        msg_req_confirm = ['confirm_transaction', 'confirm_cashout']
         if last_msg.type not in msg_req_confirm:
             raise ValueError
         
         if last_msg.timestamp < min_time:
             # late response, nuke transaction
-            last_msg.meta.staus = 'expired'
-            last_msg.meta.save()
+            # last_msg.meta.staus = 'expired'
+            # last_msg.meta.save()
             
             msg = ("Your transaction has expired because you failed to repond "
                    "in 15mins.")
@@ -307,96 +327,13 @@ def confirm(tokens, sender_number):
             messages.append(sms)
             return send_sms(messages)
         
-        transaction = last_msg.meta
-        if transaction.type == 'user_to_user_transfer':
-            receiver = User.objects.get(phone=transaction.receiver)
-            sender = User.objects.get(phone=transaction.sender)
-            
-            receiver.balance = receiver.balance + transaction.amount
-            sender.balance = sender.balance - transaction.amount
-            
-            transaction.status = 'complete'
-            receiver.save()
-            sender.save()
-            transaction.save()
-            
-            # send confirmation to both parties
-            # receiver's notification
-            msg = ("NGN%s has been successfully transferred from the account "
-                   " of %s. Your new balance is %s. Thank you for using Mopay."
-                   % (transaction.amount, transaction.sender, receiver.balance))
-            sms = OutgoingMessage(body=msg, receiver=transaction.receiver,
-                                  timestamp=time.time(), 
-                                  type='transfer_notif_receiver_completed')
-            messages.append(sms)
-            
-            # sender's notification
-            msg = ("You have successfully transferred NGN%s to %s. Your new" 
-                   "balance is NGN%s Thank you for using Mopay." 
-                   % (transaction.amount, transaction.receiver, sender.balance))
-            sms = OutgoingMessage(body=msg, receiver=transaction.sender, 
-                                  timestamp=time.time(),
-                                  type='transfer_notif_sender_completed')
-            messages.append(sms)
-            return send_sms(messages)
+        if last_msg.type == 'confirm_transaction':
+            transaction = last_msg.meta
+            return confirm_transaction(transaction)
         
-        elif transaction.type == 'user_to_guest_transfer':
-            sender = User.objects.get(phone=transaction.sender)
-            sender.balance = sender.balance - transaction.amount
-            
-            cashout_ticket = CashoutTicket(
-                id=util.generate_uuid()[0:15],sender=sender.phone,
-                receiver=transaction.receiver,transaction=transaction,
-                timestamp=time.time())
-            
-            cashout_ticket.save()
-            
-            transaction.status = 'generated_guest_cashout'
-            sender.save()
-            transaction.save()
-            
-            # send notifications
-            # receiver's notification.
-            msg = ("NGN%s has been sent to you from the account of %s."
-                   " Ticket-ID: %s. Please go to the nearest mopay agent to"
-                   " retrieve." 
-                   % (transaction.amount, transaction.sender, cashout_ticket.id))
-            sms = OutgoingMessage(body=msg, receiver=transaction.receiver,
-                                  timestamp=time.time(),
-                                  type='notif_receiver_transfer_cashout')
-            messages.append(sms)
-            
-            # sender's notificationDoesNotExist
-            msg = ("You have sent NGN%s to %s. Thank you for using mopay."
-                   % (transaction.amount, transaction.receiver))
-            sms = OutgoingMessage(body=msg, receiver=transaction.sender,
-                                  timestamp=time.time(),
-                                  type='notif_sender_cashout_gen')
-            messages.append(sms)
-            return send_sms(messages)
-        
-        elif transaction.type == 'user_cashout':
-            sender = User.objects.get(phone=transaction.sender)
-            sender.balance = sender.balance - transaction.amount
-            
-            cashout_ticket = CashoutTicket(
-                id=util.generate_uuid()[0:15],sender=sender.phone,
-                receiver=transaction.receiver,transaction=transaction,
-                timestamp=time.time())
-            
-            cashout_ticket.save()
-            transaction.status = 'cashout_ticket_generated'
-            sender.save()
-            transaction.save()
-            
-            msg = ("NGN%s been deducted from your account for a cashout ticket."
-                   " Ticket-ID: %s. Please go to the nearest mopay agent to"
-                   " retrieve." % (transaction.amount, cashout_ticket.id))
-            sms = OutgoingMessage(body=msg, receiver=transaction.receiver,
-                                  timestamp=time.time(),
-                                  type='notif_receiver_transfer_cashout')
-            messages.append(sms)
-            return send_sms(messages)
+        elif last_msg.type == 'confirm_cashout':
+            request_cashout = last_msg.meta
+            return confirm_cashout(request_cashout)
             
     except ValueError:
         msg = "You do not have any active transactions."
@@ -416,6 +353,9 @@ def cashout(tokens, sender_number):
         pin = tokens[2]
         
         user = User.objects.get(phone=sender_number)
+        if not account_activated(user):
+            return msg_account_not_activated(user.phone)
+        
         if not validate_pin(user, pin):
             return msg_invalid_pin(user.phone)
         
@@ -462,14 +402,41 @@ def cashout(tokens, sender_number):
     
 def send_sms(messages, use_render=True):
     args = {'messages': messages}
+    #_msg_args = {'action': 'sendMessage', 'ozMsUserInfo':'admin:abc123'}
+    #_root_url = "http://192.168.137.1:9501/ozeki?"
     for m in messages:
+        
+        #_msg_args['recepient'] = m.receiver
+        #_msg_args['messageData'] = m.body
+        
+        #file = urllib2.urlopen(_root_url + urllib.urlencode(_msg_args))
+        #file.read()
+        ozeki_sms_out(m.receiver, m.body)
         m.save()
+        
     if use_render == True:
         return render('admin/msg.html', args)
     
 def validate_pin(user, pin):
     if hashlib.md5(pin + user.pin_salt).hexdigest() == user.pin:
         return True
+    
+def account_activated(user):
+    """
+    Dirty hack to make sure an account is activated before use
+    """
+    if hashlib.md5("0000" + user.pin_salt).hexdigest() != user.pin:
+        return True
+
+def msg_account_not_activated(receiver):
+    messages = []
+    msg = ("Your registration has not been completed. Reply with 'register"
+           " [new-pin] [new-pin]' to complete registration")
+    sms = OutgoingMessage(body=msg, receiver=receiver,
+                          timestamp=time.time())
+    messages.append(sms)
+    return send_sms(messages)
+
     
 def msg_invalid_pin(receiver):
     messages = []
@@ -493,3 +460,132 @@ def msg_unknown_format(expected_format, receiver):
                           timestamp=time.time())
     messages.append(sms)
     return send_sms(messages)
+
+def confirm_transaction(transaction):
+    messages = []
+    if transaction.type == 'user_to_user_transfer':
+        receiver = User.objects.get(phone=transaction.receiver)
+        sender = User.objects.get(phone=transaction.sender)
+        
+        receiver.balance = receiver.balance + transaction.amount
+        sender.balance = sender.balance - transaction.amount
+        
+        transaction.status = 'complete'
+        receiver.save()
+        sender.save()
+        transaction.save()
+        
+        # send confirmation to both parties
+        # receiver's notification
+        msg = ("NGN%s has been successfully transferred from the account "
+               " of %s. Your new balance is %s. Thank you for using Mopay."
+               % (transaction.amount, transaction.sender, receiver.balance))
+        sms = OutgoingMessage(body=msg, receiver=transaction.receiver,
+                              timestamp=time.time(), 
+                              type='transfer_notif_receiver_completed')
+        messages.append(sms)
+        
+        # sender's notification
+        msg = ("You have successfully transferred NGN%s to %s. Your new" 
+               "balance is NGN%s Thank you for using Mopay." 
+               % (transaction.amount, transaction.receiver, sender.balance))
+        sms = OutgoingMessage(body=msg, receiver=transaction.sender, 
+                              timestamp=time.time(),
+                              type='transfer_notif_sender_completed')
+        messages.append(sms)
+        return send_sms(messages)
+    
+    elif transaction.type == 'user_to_guest_transfer':
+        sender = User.objects.get(phone=transaction.sender)
+        sender.balance = sender.balance - transaction.amount
+        
+        cashout_ticket = CashoutTicket(
+            id=util.generate_uuid()[0:15],sender=sender.phone,
+            receiver=transaction.receiver,transaction=transaction,
+            timestamp=time.time())
+        
+        cashout_ticket.save()
+        
+        transaction.status = 'generated_guest_cashout'
+        sender.save()
+        transaction.save()
+        
+        # send notifications
+        # receiver's notification.
+        msg = ("NGN%s has been sent to you from the account of %s."
+               " Ticket-ID: %s. Please go to the nearest mopay agent to"
+               " retrieve." 
+               % (transaction.amount, transaction.sender, cashout_ticket.id))
+        sms = OutgoingMessage(body=msg, receiver=transaction.receiver,
+                              timestamp=time.time(),
+                              type='notif_receiver_transfer_cashout')
+        messages.append(sms)
+        
+        # sender's notificationDoesNotExist
+        msg = ("You have sent NGN%s to %s. Thank you for using mopay."
+               % (transaction.amount, transaction.receiver))
+        sms = OutgoingMessage(body=msg, receiver=transaction.sender,
+                              timestamp=time.time(),
+                              type='notif_sender_cashout_gen')
+        messages.append(sms)
+        return send_sms(messages)
+    
+    elif transaction.type == 'user_cashout':
+        sender = User.objects.get(phone=transaction.sender)
+        sender.balance = sender.balance - transaction.amount
+        
+        cashout_ticket = CashoutTicket(
+            id=util.generate_uuid()[0:15],sender=sender.phone,
+            receiver=transaction.receiver,transaction=transaction,
+            timestamp=time.time())
+        
+        cashout_ticket.save()
+        transaction.status = 'cashout_ticket_generated'
+        sender.save()
+        transaction.save()
+        
+        msg = ("NGN%s been deducted from your account for a cashout ticket."
+               " Ticket-ID: %s. Please go to the nearest mopay agent to"
+               " retrieve." % (transaction.amount, cashout_ticket.id))
+        sms = OutgoingMessage(body=msg, receiver=transaction.receiver,
+                              timestamp=time.time(),
+                              type='notif_receiver_transfer_cashout')
+        messages.append(sms)
+        return send_sms(messages)
+    
+    
+def confirm_cashout(request_cashout):
+    messages = []
+    request_cashout.confirmed = True
+    request_cashout.save()
+    
+    # notify receiver to collect from agent.
+    msg = ("Your cashout for TICKET: %s has been confirmed. Please collect "
+           "NGN%s from the agent. Thank you for using mopay" 
+           % (request_cashout.cashout_ticket.id,
+              request_cashout.cashout_ticket.transaction.amount))
+    sms = OutgoingMessage(body=msg, receiver=request_cashout.cashout_ticket.receiver,
+                          timestamp=time.time(),type='notif_receiver_cashout_complete')
+    messages.append(sms)
+    return send_sms(messages)
+
+
+
+def ozeki_sms_out(receiver, body):
+    query = "insert into ozekimessageout(receiver, msg) values(%s, %s)"
+    args = (receiver, body)
+    ozeki_db_query(query, args)
+    
+def ozeki_db_query(query, args=()):
+    con = db.connect(host='localhost', user='dammy', \
+                        passwd='dammy', db='ozeki')
+    cursor = con.cursor(db.cursors.DictCursor)
+    cursor.execute(query, args)
+    result = cursor.fetchall()
+    if len(result) == 0:
+        result = None
+    con.commit()
+    con.close()
+    return result
+    
+    

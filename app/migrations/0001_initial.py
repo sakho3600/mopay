@@ -69,12 +69,12 @@ class Migration(SchemaMigration):
         # Adding model 'Transaction'
         db.create_table('app_transaction', (
             ('id', self.gf('django.db.models.fields.CharField')(unique=True, max_length=30, primary_key=True)),
-            ('status', self.gf('django.db.models.fields.CharField')(default='start', max_length=15)),
+            ('status', self.gf('django.db.models.fields.CharField')(default='start', max_length=50)),
             ('sender', self.gf('django.db.models.fields.CharField')(max_length=20)),
             ('receiver', self.gf('django.db.models.fields.CharField')(max_length=20)),
             ('timestamp', self.gf('django.db.models.fields.CharField')(max_length=30)),
             ('amount', self.gf('django.db.models.fields.FloatField')()),
-            ('type', self.gf('django.db.models.fields.CharField')(max_length=15)),
+            ('type', self.gf('django.db.models.fields.CharField')(max_length=50)),
         ))
         db.send_create_signal('app', ['Transaction'])
 
@@ -94,6 +94,7 @@ class Migration(SchemaMigration):
             ('agent', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Agent'])),
             ('cashout_ticket', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.CashoutTicket'])),
             ('confirmed', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('timestamp', self.gf('django.db.models.fields.CharField')(max_length=30)),
         ))
         db.send_create_signal('app', ['RequestCashoutTicket'])
 
@@ -217,7 +218,8 @@ class Migration(SchemaMigration):
             'agent': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['app.Agent']"}),
             'cashout_ticket': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['app.CashoutTicket']"}),
             'confirmed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'timestamp': ('django.db.models.fields.CharField', [], {'max_length': '30'})
         },
         'app.transaction': {
             'Meta': {'object_name': 'Transaction'},
@@ -225,9 +227,9 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30', 'primary_key': 'True'}),
             'receiver': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             'sender': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
-            'status': ('django.db.models.fields.CharField', [], {'default': "'start'", 'max_length': '15'}),
+            'status': ('django.db.models.fields.CharField', [], {'default': "'start'", 'max_length': '50'}),
             'timestamp': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
-            'type': ('django.db.models.fields.CharField', [], {'max_length': '15'})
+            'type': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
         'app.user': {
             'Meta': {'object_name': 'User'},

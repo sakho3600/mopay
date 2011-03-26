@@ -1,0 +1,82 @@
+{% extends "agent/master.html" %}
+{% load mopay_filters %}
+{% block title %} Play {% endblock %}
+
+{% block body %}
+	{% include "flash.html" %}
+	<div class="mo-page-header">
+    	Cashout Ticket Detail
+    </div>
+    <div>
+        <table class='mo-ticket-detail'>
+            <tr>
+                <td><b>Cashout Ticket ID</b>:</td>
+                <td>{{ ticket.id }}</td>
+            </tr>
+            <tr>
+                <td><b>Amount</b>: </td>
+                <td style="color: green; font-weight:bold;">NGN{{ ticket.transaction.amount }}</td>
+            </tr>
+            <tr>
+                <td><b>Sender</b>: </td>
+                <td>{{ ticket.sender }}</td>
+            </tr>
+            <tr>
+                <td><b>Receiver</b>: </td>
+                <td>{{ ticket.receiver }}</td>
+            </tr>
+            <tr>
+                <td><b>Date Sent</b>: </td>
+                <td>{{ ticket.timestamp|from_timestamp }}</td>
+            </tr>
+        </table>
+        <div style="margin-top: 20px;">
+        	<form method="post" action="/agent/cashout/ticket/details/process">
+            	<input type="hidden" name="form_name" value="request_ticket_cashout" />
+                <input type="hidden" name="ticket_id" value="{{ ticket.id }}" />
+        		<input type="submit" value="Request Ticket Cashout" />
+            </form>
+        </div>
+    </div>
+    
+    {% if request_cashout_tickets %}
+        <div style="height: 20px;"></div>
+        <div class="mo-page-header">
+            Cashout Requests For this Ticket
+        </div>
+        <div>
+            <table class='mo-admin-table'>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="2">
+                            Status
+                        </th>
+                        <th>
+                            Date Requested
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for x in request_cashout_tickets %}
+                    <tr
+                        {% if forloop.counter|mod %} 
+                            class = 'tb-even'
+                        {% endif %}
+                        >
+                        <td scope='row' colspan="2">
+                            {% if x.confirmed %}
+                            	<b style="color: green">Confirmed</b>
+                            {% else %}
+                            	<b style="color: red">NOT Confirmed</b>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ x.timestamp|from_timestamp }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+       {% endif %}
+{% endblock %}

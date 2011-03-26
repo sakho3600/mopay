@@ -5,7 +5,7 @@
 {% block body %}
 	{% include "flash.html" %}
 	<div class="mo-page-header">
-    	Cashout History
+    	Active Cashout Requests
     </div>
     <div>
     	<table class='mo-admin-table'>
@@ -25,6 +25,9 @@
                     </th>
                     <th>
                         Date
+                    </th>
+                    <th>
+                    	Status
                     </th>
                     <th>
                     </th>
@@ -51,6 +54,13 @@
                     </td>
                     <td>
                         {{ x.timestamp|from_timestamp }}
+                    </td>
+                    <td>
+                    	{% if x.confirmed %}
+                            	<b style="color: green">Confirmed</b>
+                        {% else %}
+                            <b style="color: red">NOT Confirmed</b>
+                        {% endif %}
                     </td>
                     <td>
                         <a href='/agent/cashout/ticket/details?ticket={{ x.cashout_ticket.id }}'>View Details</a>

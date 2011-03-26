@@ -1,7 +1,7 @@
 var $j = jQuery.noConflict();
 window.setInterval(function(){
 	$j("#msg").slideUp();
-}, 3000);
+}, 10000);
 
 
 function showLoading(){

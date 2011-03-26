@@ -248,3 +248,15 @@ select{
     font-size: 11px;
 	font-weight: normal;
 }
+
+.mo-ticket-detail{
+}
+
+.mo-ticket-detail tr{
+	border-bottom: solid 1px #eee;
+}
+
+.mo-ticket-detail td{
+	border-bottom: solid 1px #444;
+	padding: 5px;
+}

@@ -73,7 +73,8 @@ class CashoutTicket(models.Model):
 class RequestCashoutTicket(models.Model):
     agent = models.ForeignKey(Agent)
     cashout_ticket = models.ForeignKey(CashoutTicket)
-    confirmed = models.BooleanField()
+    confirmed = models.BooleanField(default=False)
+    timestamp = models.CharField(max_length=30)
     
 class IncomingMessage(models.Model):
     sender = models.CharField(max_length=15)
