@@ -31,10 +31,21 @@
             </tr>
         </table>
         <div style="margin-top: 20px;">
-        	<form method="post" action="/agent/cashout/ticket/details/process">
+        	<form method="post" action="/agent/cashout/ticket/details/process/">
             	<input type="hidden" name="form_name" value="request_ticket_cashout" />
                 <input type="hidden" name="ticket_id" value="{{ ticket.id }}" />
-        		<input type="submit" value="Request Ticket Cashout" />
+        		<input type="button" value="Cashout Ticket" onclick="showDialog();" />
+                <div style="height: 10px;"></div>
+                <script>
+					function showDialog(){
+						$j("#dialog_cashout").slideDown();
+					}
+				</script>
+                <div id="dialog_cashout" class="mo-msg" style="display: none;">
+                	Are you sure you want to process cashout ?? <br /> 
+                    <b style="color:#FF0000">Please confirm the details again.</b><br /><br />
+                    <input type="submit" value="Continue Process" />
+                </div>
             </form>
         </div>
     </div>
@@ -65,9 +76,9 @@
                         >
                         <td scope='row' colspan="2">
                             {% if x.confirmed %}
-                            	<b style="color: green">Confirmed</b>
+                            	<b style="color: green">Cashed Out</b>
                             {% else %}
-                            	<b style="color: red">NOT Confirmed</b>
+                            	<b style="color: red">NOT Cashed Out</b>
                             {% endif %}
                         </td>
                         <td>

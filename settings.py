@@ -8,8 +8,6 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
-APPEND_SLASH = False
-
 MANAGERS = ADMINS
 
 DATABASES = {

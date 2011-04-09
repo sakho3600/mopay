@@ -14,48 +14,48 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # (r'^admin/', include(admin.site.urls)),
     
-    (r'^request$', 'app.views.request'),
-    (r'^random$', 'app.admin.views.random'),
-    (r'^play$', 'app.admin.views.play'),
+    (r'^request/$', 'app.views.request'),
+    (r'^random/$', 'app.admin.views.random'),
+    (r'^play/$', 'app.admin.views.play'),
     
     # agents center
-    (r'^agent$', 'app.agent.views.main'),
-    (r'^agent/register/user$', 'app.agent.views.register_user'),
-    (r'^agent/register/user/process$', 'app.agent.views.register_user_process'),
+    (r'^agent/$', 'app.agent.views.main'),
+    (r'^agent/register/user/$', 'app.agent.views.register_user'),
+    (r'^agent/register/user/process/$', 'app.agent.views.register_user_process'),
     
-    (r'^agent/cashout/ticket$', 'app.agent.views.cashout_ticket'),
-    (r'^agent/cashout/ticket/details$', 'app.agent.views.cashout_ticket_details'),
-    (r'^agent/cashout/ticket/details/process$', 'app.agent.views.cashout_ticket_details_process'),
-    (r'^agent/cashout/active/requests$', 'app.agent.views.cashout_active_requests'),
+    (r'^agent/cashout/ticket/$', 'app.agent.views.cashout_ticket'),
+    (r'^agent/cashout/ticket/details/$', 'app.agent.views.cashout_ticket_details'),
+    (r'^agent/cashout/ticket/details/process/$', 'app.agent.views.cashout_ticket_details_process'),
+    (r'^agent/cashout/active/requests/$', 'app.agent.views.cashout_active_requests'),
     
-    (r'^agent/cashout/history$', 'app.agent.views.cashout_history'),
+    (r'^agent/cashout/history/$', 'app.agent.views.cashout_history'),
     
     
-    (r'^agent/login$', 'app.agent.views.login'),
-    (r'^agent/login_process$', 'app.agent.views.login_process'),
-    (r'^agent/logout$', 'app.agent.views.logout'),
+    (r'^agent/login/$', 'app.agent.views.login'),
+    (r'^agent/login_process/$', 'app.agent.views.login_process'),
+    (r'^agent/logout/$', 'app.agent.views.logout'),
     
-    (r'^agent/change_password$', 'app.agent.views.change_password'),
-    (r'^agent/change_password/process$', 'app.agent.views.change_password_process'),
+    (r'^agent/change_password/$', 'app.agent.views.change_password'),
+    (r'^agent/change_password/process/$', 'app.agent.views.change_password_process'),
     
     #admin center
-    (r'^admin$', 'app.admin.views.main'),
+    (r'^admin/$', 'app.admin.views.main'),
     
-    (r'^admin/log/transactions$', 'app.admin.views.transaction_log'),
-    (r'^admin/log/incoming/message$', 'app.admin.views.incoming_message_log'),
-    (r'^admin/log/outgoing/message$', 'app.admin.views.outgoing_message_log'),
+    (r'^admin/log/transactions/$', 'app.admin.views.transaction_log'),
+    (r'^admin/log/incoming/message/$', 'app.admin.views.incoming_message_log'),
+    (r'^admin/log/outgoing/message/$', 'app.admin.views.outgoing_message_log'),
     
-    (r'^admin/manage/users$', 'app.admin.views.users'),
+    (r'^admin/manage/users/$', 'app.admin.views.users'),
     
-    (r'^admin/manage/agents$', 'app.admin.views.agents'),
-    (r'^admin/manage/agents/add$', 'app.admin.views.agents_add'),
-    (r'^admin/manage/agents/add_process$', 'app.admin.views.agents_add_process'),
+    (r'^admin/manage/agents/$', 'app.admin.views.agents'),
+    (r'^admin/manage/agents/add/$', 'app.admin.views.agents_add'),
+    (r'^admin/manage/agents/add_process/$', 'app.admin.views.agents_add_process'),
     
-    (r'^admin/manage/cards$', 'app.admin.views.cards'),
+    (r'^admin/manage/cards/$', 'app.admin.views.cards'),
     
-    (r'^admin/play$', 'app.admin.views.play'),
+    (r'^admin/play/$', 'app.admin.views.play'),
     
-    (r'^admin/login$', 'app.admin.views.login'),
-    (r'^admin/logout$', 'app.admin.views.logout'),
-    (r'^admin/login_process$', 'app.admin.views.login_process'),
+    (r'^admin/login/$', 'app.admin.views.login'),
+    (r'^admin/logout/$', 'app.admin.views.logout'),
+    (r'^admin/login_process/$', 'app.admin.views.login_process'),
 )

@@ -20,7 +20,7 @@ USER_REG_SUCCESS = "5"
 
 USER_ALREADY_REGISTERED = "7"
 
-CASHOUT_REQUEST_SENT  = "9"
+CASHOUT_REQUEST_SUCCESS  = "9"
 CASHOUT_REQUEST_ALREADY_SENT = "10"
 CASHOUT_ALREADY_MADE = "11"
 
@@ -152,7 +152,7 @@ def register_user_process(request):
                 _user.phone = request.POST.get('phone')
                 # send sms to new user
                 msg = ("Please respond to this sms with your new PIN, in the format"
-                       "'register [new pin] [new pin]' to complete the registration.")
+                       " 'register [new pin] [new pin]' to complete the registration.")
                 sms = OutgoingMessage(receiver=_user.phone, body=msg,
                                       timestamp=time.time(), type='user_reg')
                 messages = [sms]
@@ -221,9 +221,9 @@ def cashout_ticket_details(request):
     if not request.GET.get('ticket'):
         return redirect('/agent/cashout/ticket')
     
-    if request.GET.get('msg') == CASHOUT_REQUEST_SENT:
-        args['msg'] = ("Cashout request has been sent to the receiver"
-                       ". Please wait for confirmation to pay the receiver.")
+    if request.GET.get('msg') == CASHOUT_REQUEST_SUCCESS:
+        args['msg'] = ("Cashout Request is successful. Please pay the customer.")
+
     elif request.GET.get('msg') == CASHOUT_REQUEST_ALREADY_SENT:
         args['msg_error'] = ("Cashout request has already been sent to the "
                              "receiver. Please wait for confirmation.")
@@ -246,14 +246,14 @@ def cashout_ticket_details(request):
         return render('agent/cashout_ticket_details.html', args)
         
     except CashoutTicket.DoesNotExist:
-        return redirect('/agent/cashout/ticket')
-    
+        return redirect('/agent/cashout/ticket') 
+
+"""    
 def cashout_ticket_details_process(request):
-    """
-    Description:
+
         Simply process the cashout for a ticket from 
         cashout_ticket_details page
-    """
+
     messages = []
     args = _get_args(request)
     
@@ -291,7 +291,34 @@ def cashout_ticket_details_process(request):
         
         return redirect('/agent/cashout/ticket/details?ticket=%s&msg=%s'
                         % (ticket_id, msg))
-    
+"""
+
+def cashout_ticket_details_process(request):
+    messages = []
+    args = _get_args(request)
+   
+    if request.POST.get('form_name') == 'request_ticket_cashout':
+        ticket_id = request.POST.get('ticket_id')
+        cashout_ticket = CashoutTicket.objects.get(Q(id=ticket_id))
+
+        try:
+            request_cashout_ticket = RequestCashoutTicket. \
+                objects.get(Q(cashout_ticket=cashout_ticket))
+
+            if request_cashout_ticket.confirmed:
+                msg = CASHOUT_ALREADY_MADE
+            
+        except RequestCashoutTicket.DoesNotExist:
+            request_cashout_ticket = RequestCashoutTicket(
+                agent=args['agent'], cashout_ticket=cashout_ticket,
+                timestamp=time.time(), confirmed=True)
+            request_cashout_ticket.save()
+            
+            msg = CASHOUT_REQUEST_SUCCESS
+
+        return redirect('/agent/cashout/ticket/details?ticket=%s&msg=%s'
+                            % (ticket_id, msg))
+                
 def cashout_history(request):
     args = _get_args(request)
     args['page_name'] = 'cashout_history'

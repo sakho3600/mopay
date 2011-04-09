@@ -205,8 +205,8 @@ def load_account(tokens, sender_number):
             user.save()
             card.save()
             
-            msg = ("Your account balance has been successfully loaded. Your"
-                   " new balance is %s" % user.balance)
+            msg = ("Your account has been successfully loaded with NGN%s. Your"
+                   " new balance is NGN%s" % (card.value, user.balance))
             sms = OutgoingMessage(
                 body=msg, receiver=sender_number, timestamp=time.time(), 
                 type='load_account_success')
@@ -478,7 +478,7 @@ def confirm_transaction(transaction):
         # send confirmation to both parties
         # receiver's notification
         msg = ("NGN%s has been successfully transferred from the account "
-               " of %s. Your new balance is %s. Thank you for using Mopay."
+               " of %s to you. Your new balance is NGN%s. Thank you for using Mopay."
                % (transaction.amount, transaction.sender, receiver.balance))
         sms = OutgoingMessage(body=msg, receiver=transaction.receiver,
                               timestamp=time.time(), 
@@ -487,7 +487,7 @@ def confirm_transaction(transaction):
         
         # sender's notification
         msg = ("You have successfully transferred NGN%s to %s. Your new" 
-               "balance is NGN%s Thank you for using Mopay." 
+               " balance is NGN%s. Thank you for using Mopay." 
                % (transaction.amount, transaction.receiver, sender.balance))
         sms = OutgoingMessage(body=msg, receiver=transaction.sender, 
                               timestamp=time.time(),
@@ -512,7 +512,7 @@ def confirm_transaction(transaction):
         
         # send notifications
         # receiver's notification.
-        msg = ("NGN%s has been sent to you from the account of %s."
+        msg = ("NGN%s has been sent to you from the account of %s via mopay."
                " Ticket-ID: %s. Please go to the nearest mopay agent to"
                " retrieve." 
                % (transaction.amount, transaction.sender, cashout_ticket.id))

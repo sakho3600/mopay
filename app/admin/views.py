@@ -27,8 +27,8 @@ def main(request):
 
 def play(request):
     args['page_name'] = 'play'
-    args['password'] = 'superadmin'
-    args['password_salt'] = '0x1edf33#@'
+    args['password'] = 'password'
+    args['password_salt'] = 'fx123ddsf09568#$@!'
     args['password_hash'] = hashlib.md5(args['password'] + args['password_salt']).hexdigest()
     """
     msg = OutgoingMessage()
