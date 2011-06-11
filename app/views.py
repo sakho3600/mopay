@@ -48,7 +48,7 @@ def request(request):
     
 def unknown_service_command(receiver):
     messages = []
-    msg = ("Unknow service command. Reply this message with help.")
+    msg = ("Unknow service command. Thank you for using Mopay.")
     sms = OutgoingMessage(body=msg, receiver=receiver,
                           timestamp=time.time())
     messages.append(sms)

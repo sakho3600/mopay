@@ -12,6 +12,8 @@ from app.models import RequestCashoutTicket
 from app import util
 from app import actions
 
+import settings
+
 INVALID_LOGIN = "1"
 LOGOUT_SUCCESS = "2"
 PASSWORD_CHANGED = "3"
@@ -19,6 +21,7 @@ PASSWORD_MATCH_FAILED = "4"
 USER_REG_SUCCESS = "5"
 
 USER_ALREADY_REGISTERED = "7"
+FIELDS_EMPTY = "8"
 
 CASHOUT_REQUEST_SUCCESS  = "9"
 CASHOUT_REQUEST_ALREADY_SENT = "10"
@@ -28,7 +31,8 @@ def _get_args(request):
     """
     Generic args passed to every template
     """
-    args = {'agent': request.session.get('agent'), 'page_name': ''}
+    args = {'agent': request.session.get('agent'), 'page_name': '', 
+            'MEDIA_URL': settings.MEDIA_URL}
     return args
     
 def main(request):
@@ -128,7 +132,9 @@ def register_user(request):
         args['msg'] = 'User registration has been completed'
     elif request.GET.get('msg') == USER_ALREADY_REGISTERED:
         args['msg_error'] = 'The phone number has already been registered'
-        
+    elif request.GET.get('msg') == FIELDS_EMPTY:
+        args['msg_error'] = "One or more fields are empty. All fields are \
+                              compulsory."
     return render('agent/register_user.html', args)
 
 def register_user_process(request):
@@ -139,6 +145,16 @@ def register_user_process(request):
     
     if not user_logged_in(request):
         return redirect_login()
+
+    #check if form any field is empty
+    __phone = request.POST.get('phone')
+    __firstname = request.POST.get('firstname')
+    __lastname = request.POST.get('lastname')
+    __address = request.POST.get('address')
+
+    if __phone == '' or __firstname == '' or \
+            __lastname == '' or __address == '':
+        return redirect('/agent/register/user?msg=8')
     
     if request.POST.get('form_name') == 'register_user':
         #check for already existing user

@@ -159,6 +159,9 @@ def transaction_history(tokens, sender_number):
             
             if transactions.index(x) != (len(transactions) - 1):
                 msg = msg + " | "
+
+        if len(transactions) == 0:
+            msg = 'You have not performed any transactions.'
         
         sms = OutgoingMessage(body=msg, receiver=sender_number,
                               timestamp=time.time(), type='transaction_history')
@@ -568,7 +571,6 @@ def confirm_cashout(request_cashout):
                           timestamp=time.time(),type='notif_receiver_cashout_complete')
     messages.append(sms)
     return send_sms(messages)
-
 
 
 def ozeki_sms_out(receiver, body):
