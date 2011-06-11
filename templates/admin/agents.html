@@ -1,0 +1,66 @@
+{% extends "admin/master.html" %}
+{% load mopay_filters %}
+{% block title %} Play {% endblock %}
+
+{% block body %}
+	{% include "flash.html" %}
+	<div class="mo-page-header">
+    	<div class='mo-left'>
+    		Add Agent
+    	</div>
+		<div class='mo-right mo-small'>
+			[ <a href='/admin/manage/agents/add'>add agent</a> ]
+		</div>
+		<div class='mo-clear'></div>
+	</div>
+	<table class='mo-admin-table'>
+		<thead>
+	    	<tr>
+	        	<th scope="col" colspan="2">
+	            	User Name
+	            </th>
+	            <th>
+	            	First Name
+	            </th>
+                <th>
+	            	Last Name
+	            </th>
+                <th>
+	            	Phone
+	            </th>
+	            <th>
+	            </th>
+                <th>
+	            </th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	    	{% for x in agents %}
+	    	<tr
+	        	{% if forloop.counter|mod %} 
+	            	class = 'tb-even'
+	           	{% endif %}
+	        	>
+	        	<td scope='row' colspan="2">
+	            	{{ x.username }}
+	            </td>
+	            <td>
+	            	{{ x.first_name }}
+	            </td>
+                <td>
+	            	{{ x.last_name }}
+	            </td>
+                <td>
+	            	{{ x.phone }}
+	            </td>
+	            <td>
+	            	<a href='/admin/manage/agents/details?agent={{ x.id }}'>View Details</a>
+	            </td>
+                <td>
+	            	<a href='/admin/manage/agents/details?agent={{ x.id }}'>Disable Agent</a>
+	            </td>
+	        </tr>
+	        {% endfor %}
+	    </tbody>
+	</table>
+{% endblock %}

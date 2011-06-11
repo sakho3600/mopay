@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Mopay Agent Center</title>
+<link rel="stylesheet" href="{{ MEDIA_URL }}/css/mopay.css" type="text/css" />
+<link rel='stylesheet' href='{{ MEDIA_URL }}/css/admin.css' type='text/css' />
+<script src="{{ MEDIA_URL }}/scripts/jquery.js" type='text/javascript'></script>
+<script src='{{ MEDIA_URL }}/scripts/mopay.js' type='text/javascript'></script>
+<script src="{{ MEDIA_URL }}/scripts/admin.js" type='text/javascript'></script>
+</head>
+
+<body>
+	<div class="container">
+		{% include "flash.html" %}
+    	<div style="height: 150px;"></div>
+    	<div class="mo-left">
+        	<div style="margin-left: 180px; margin-top: 80px;">
+        	<form class="form" method="post" enctype="application/x-www-form-urlencoded" action="/agent/login_process/">
+        		<input type="hidden" name="form_name" value="agent_login" />
+            	<table>
+                	<tr>
+                    	<td>Username: </td>
+                        <td><input type="text" name="username" /></td>
+                    </tr>
+                    <tr>
+                    	<td>Password: </td>
+                        <td><input type="password" name="password" /></td>
+                    </tr>
+                    <tr>
+                    	<td></td>
+                        <td><input type="submit" value="login" class="uiButton" /></td>
+                    </tr>
+                </table>
+            </form>
+            </div>
+        </div>
+        <div class="mo-right" style="margin-right: 100px;">
+        	<img alt="mopay admin center" src="{{ MEDIA_URL }}/images/mopay-agent-center.jpg" />
+        </div>
+        <div class="mo-clear"></div>
+    </div>
+    <div style="margin-top: 100px;">
+    	{% include "footer.html" %}
+    </div>
+</body>
+</html>

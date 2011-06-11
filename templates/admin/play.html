@@ -1,0 +1,10 @@
+{% extends "admin/master.html" %}
+{% block title %} Play {% endblock %}
+
+{% block body %}
+	password: {{ password }} <br />
+	salt: {{ password_salt }} <br />
+	password_hash: {{ password_hash }} <br />
+    meta: {{ meta }} <br />
+    meta_other: {{ meta_other }}
+{% endblock %}

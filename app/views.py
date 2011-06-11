@@ -2,9 +2,8 @@ import time
 from django.shortcuts import render_to_response as render
 
 import actions
-import util
-from models import User
 from models import IncomingMessage
+from models import OutgoingMessage
 
 args = {}
 def request(request):
@@ -13,60 +12,44 @@ def request(request):
     msg_body = request.GET.get('msg')
     sender_number = request.GET.get('sender')
     
+    if sender_number[:4] == '+234':
+        sender_number = '0' + sender_number[4:]
+    
     msg_body = msg_body.lower()
-    
-    try:
-        sender = User.objects.get(phone=sender_number)
-    except User.DoesNotExist:
-        sender = User(phone=sender_number)
-        sender.save()
-    
-    message = IncomingMessage(sender=sender, body=msg_body, 
+    message = IncomingMessage(sender=sender_number, body=msg_body, 
                                      timestamp=time.time())
     message.save()
-
-    tokens = msg_body.split(' ')
-    command = tokens[0]
     
-    if command == 'send':
-        return actions.send(tokens, sender)
-    elif command == 'cancel':
-        return actions.cancel(tokens, sender)
-    elif command == 'cashout':
-        return actions.agent_cashout(tokens, sender)
-    elif command == 'confirm':
-        return actions.confirm_cashout(tokens, sender)
-    else:
-        args = {'error_msg': 'Unknown service command. Please try again' }
-        return render('msg.html', args)
+    try:
+        tokens = msg_body.split(' ')
+        command = tokens[0]
         
-def play(request):
-    args = {'page_name': 'play'}
-    return render('play.html', args)
-
-def cards(request):
-    args['page_name'] = 'cards'
-    return render('cards.html', args)
-
-def agents(request):
-    args['page_name'] = 'agents'
-    return render('agents.html', args)
-
-def transaction_log(request):
-    args['page_name'] = 'transaction_log'
-    return render('transaction_log.html', args)
-
-def incoming_message_log(request):
-    args['page_name'] = 'incoming_message_log'
-    return render('incoming_message_log.html', args)
-
-def outgoing_message_log(request):
-    args['page_name'] = 'outgoing_message_log'
-    return render('outgoing_message_log.html', args)
-
-def random(request):
-    util.generate_cards()
-    return render('index.html', args)
-
-def login(request):
-    return render('login.html', args)
+        if command == 'register':
+            return actions.register(tokens, sender_number)
+        elif command == 'balance':
+            return actions.balance(tokens, sender_number)
+        elif command == 'reload':
+            return actions.load_account(tokens, sender_number)
+        elif command == 'change' and tokens[1] == 'pin':
+            return actions.change_pin(tokens, sender_number)
+        elif command == 'transfer':
+            return actions.transfer_funds(tokens, sender_number)
+        elif command == 'cashout':
+            return actions.cashout(tokens, sender_number)
+        elif command == 'confirm':
+            return actions.confirm(tokens, sender_number)
+        elif command == 'transaction' and tokens[1] == 'history':
+            return actions.transaction_history(tokens, sender_number)
+        else:
+            return unknown_service_command(sender_number)
+        
+    except IndexError:
+        return unknown_service_command(sender_number)
+    
+def unknown_service_command(receiver):
+    messages = []
+    msg = ("Unknow service command. Thank you for using Mopay.")
+    sms = OutgoingMessage(body=msg, receiver=receiver,
+                          timestamp=time.time())
+    messages.append(sms)
+    return actions.send_sms(messages)

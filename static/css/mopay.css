@@ -38,7 +38,7 @@ body .container{
     padding-top: 5px;
 }
 
-.nw-top-bar{
+.mo-top-bar{
     background-color: #E5ECF9;
     border-top: solid 1px  #ccc;
     border-bottom: solid 1px #ccc;
@@ -46,17 +46,17 @@ body .container{
     padding-right: 10px;
 }
 
-.nw-top-bar .content{
+.mo-top-bar .content{
     width: 1000px;
     margin: 0 auto;
     padding: 6px;
 }
 
-.nw-top-bar .nw-main-nav{
+.mo-top-bar .mo-main-nav{
     padding: 0px;
 }
 
-.nw-top-bar .nw-main-nav a{
+.mo-top-bar .mo-main-nav a{
     padding: 6px 20px 6px 20px;
 }
 
@@ -134,14 +134,14 @@ select{
 .form input[type='text']{
 	padding: 5px;
 	min-width: 160px;
-	border: solid 1px #eee;
+	border: solid 1px #bbb;
     font: normal normal normal 12px Tahoma,'Lucida Grande', Arial, sans-serif;
 }
 
 .form input[type='password']{
 	padding: 5px;
 	min-width: 160px;
-	border: solid 1px #eee;
+	border: solid 1px #bbb;
     font: normal normal normal 12px Tahoma,'Lucida Grande', Tahoma, Arial, sans-serif;
 }
 
@@ -149,13 +149,13 @@ select{
     padding: 5px;
 	min-width: 300px;
     min-height: 100px;
-	border: solid 1px #eee;
+	border: solid 1px #bbb;
     font: normal normal normal 12px Tahoma,'Lucida Grande', Tahoma, Arial, sans-serif;
 }
 
 .form select{
     padding: 3px;
-    border: solid 1px #eee;
+    border: solid 1px #bbb;
 }
 
 .uiButton{
@@ -181,48 +181,50 @@ select{
     background:url("../images/input_bg_hover.png") repeat-x scroll center top transparent;
 }
 
-.nw-left{
+.mo-left{
     float: left;
 }
 
-.nw-right{
+.mo-right{
     float: right;
 }
 
-.nw-clear{
+.mo-clear{
     clear: both;
 }
 
-.nw-msg{
+.mo-msg{
     background-color: #fff7dd;
-    padding: 5px;
+    padding: 10px;
     margin-bottom: 10px;
 }
 
-.nw-msg-error{
+.mo-msg-error{
     background-color: #ffeeee;
+	padding: 10px;
+	margin-bottom: 10px;
 }
 
-.nw-price{
+.mo-price{
     font-weight: bold;
     color: green;
 }
 
-.nw-list-price{
+.mo-list-price{
     color: red;
 }
 
-.nw-text-area{
+.mo-text-area{
     text-align: justify; 
 }
 
-.nw-box{
+.mo-box{
     border: solid 1px #eee;
     padding: 5px;
     min-height: 100px;
 }
 
-.nw-box-header{
+.mo-box-header{
     padding-bottom: 3px;
     padding-left: 10px;
     padding-right: 10px;
@@ -230,18 +232,31 @@ select{
     margin-bottom: 10px;
 }
 
-.nw-box-header-blue{
+.mo-box-header-blue{
     margin-bottom: 5px;
     color: #3B5998;
     font-weight: bold;
 }
 
-.nw-box-content{
+.mo-box-content{
     padding-left: 20px;
     padding-right: 20px;
 }
 
-.nw-small{
-    font-family: Tahoma,Verdana, Arial, sans-serif;
+.mo-small{
+    font-family: Ubuntu,Tahoma,Verdana, Arial, sans-serif;
     font-size: 11px;
+	font-weight: normal;
+}
+
+.mo-ticket-detail{
+}
+
+.mo-ticket-detail tr{
+	border-bottom: solid 1px #eee;
+}
+
+.mo-ticket-detail td{
+	border-bottom: solid 1px #444;
+	padding: 5px;
 }

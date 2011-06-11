@@ -1,0 +1,73 @@
+{% extends "agent/master.html" %}
+{% load mopay_filters %}
+{% block title %} Mopay Agent Center {% endblock %}
+
+{% block body %}
+	{% include "flash.html" %}
+	<div class="mo-page-header">
+    	Active Cashout Requests
+    </div>
+    <div>
+    	<table class='mo-admin-table'>
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2">
+                        Ticket ID
+                    </th>
+                    <th>
+                        Sender
+                    </th>
+                    <th>
+                        Receiver
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                    	Status
+                    </th>
+                    <th>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for x in request_cashouts %}
+                <tr
+                    {% if forloop.counter|mod %} 
+                        class = 'tb-even'
+                    {% endif %}
+                    >
+                    <td scope='row' colspan="2">
+                        {{ x.cashout_ticket.id }}
+                    </td>
+                    <td>
+                        {{ x.cashout_ticket.sender }}
+                    </td>
+                    <td>
+                        {{ x.cashout_ticket.receiver }}
+                    </td>
+                    <td>
+                        <b style="color: green;">NGN{{ x.cashout_ticket.transaction.amount }}</b>
+                    </td>
+                    <td>
+                        {{ x.timestamp|from_timestamp }}
+                    </td>
+                    <td>
+                    	{% if x.confirmed %}
+                            	<b style="color: green">Confirmed</b>
+                        {% else %}
+                            <b style="color: red">NOT Confirmed</b>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href='/agent/cashout/ticket/details?ticket={{ x.cashout_ticket.id }}'>View Details</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

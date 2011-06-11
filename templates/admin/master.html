@@ -12,16 +12,16 @@
 
 <body>
 	<div>
-        {% include "header.html" %}
+        {% include "admin/header.html" %}
     <div>
 	<div class='container'>
-        <div class='nw-left nw-admin-leftnav'>
-            {% include "nav.html" %}
+        <div class='mo-left mo-admin-leftnav'>
+            {% include "admin/nav.html" %}
         </div>
-        <div class='nw-right nw-admin-maincontent'>
+        <div class='mo-right mo-admin-maincontent'>
             {% block body %} {% endblock%}
         </div>
-        <div class='nw-clear'></div>
+        <div class='mo-clear'></div>
     </div>
     <div>
     	{% include "footer.html" %}

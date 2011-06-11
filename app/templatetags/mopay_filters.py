@@ -1,4 +1,5 @@
 from django import template
+import datetime
 
 register = template.Library()
 
@@ -23,6 +24,11 @@ def mod(value):
     else:
         return False
     
+@register.filter
+def len(value):
+    """ simple modulus 2 custom tag. """
+    return len(value)
+    
 @register.filter 
 def get(value, key):
     """ Get the value of a key from a dict """
@@ -40,6 +46,13 @@ def from_html(value):
         return value.replace('<br />', '\n')
     except Exception:
         return ''
+    
+@register.filter
+def from_timestamp(value):
+    """
+    Converts timestamp time to string date
+    """
+    return datetime.datetime.fromtimestamp(float(value))
 
 @register.filter
 def to_friendly_url(value):

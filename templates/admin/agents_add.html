@@ -1,0 +1,53 @@
+{% extends "admin/master.html" %}
+{% load mopay_filters %}
+{% block title %} Mopay Admin Center {% endblock %}
+
+{% block body %}
+	{% include "flash.html" %}
+	<div class='mo-page-header'>
+    	Add Agent
+    </div>
+    <div>
+    	<form action="/admin/manage/agents/add_process/" method="post" class="form" enctype="multipart/form-data">
+        	<input type="hidden" name="form_name" value="add_agent" />
+        	<table>
+            	<tr>
+                	<td>Firstname: </td>
+                    <td><input type='text' name='first_name' /></td>
+                </tr>
+                <tr>
+                	<td>Lastname: </td>
+                    <td><input type='text' name='last_name' /></td>
+                </tr>
+                <tr>
+                	<td>Username: </td>
+                    <td><input type='text' name='username' /></td>
+                </tr>
+                <tr>
+                	<td>Phone Number: </td>
+                    <td><input type='text' name='phone' /></td>
+                </tr>
+                <tr>
+                	<td valign="top">Address: </td>
+                    <td><textarea name='address'></textarea></td>
+                </tr>
+                <tr>
+                	<td>Identity: </td>
+                    <td><input type="file" name="id" /></td>
+                </tr>
+                <tr>
+                	<td>Signature: </td>
+                    <td><input type="file" name="sig" /></td>
+                </tr>
+                <tr>
+                	<td></td>
+                    <td><div class="mo-clear" style="height: 20px;"></div></td>
+                </tr>
+                <tr>
+                	<td></td>
+                    <td><input type="submit" value="Add agent" /></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+{% endblock %}
